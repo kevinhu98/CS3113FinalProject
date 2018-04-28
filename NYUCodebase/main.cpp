@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
 	spriteSheetTexture = LoadTexture(RESOURCE_FOLDER"arne_sprites.png", GL_NEAREST);
 	map.setSpriteSheet(spriteSheetTexture, 16, 8);
-	map.Load(RESOURCE_FOLDER"hw4.txt");
+	map.Load(RESOURCE_FOLDER"AITEST2.txt");
 	
 	Utilities.event = &event;
 	Utilities.keys = keys;

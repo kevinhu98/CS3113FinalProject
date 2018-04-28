@@ -31,27 +31,12 @@ void Entity::render(ShaderProgram &program) {
 	modelMatrix.Identity();
 	modelMatrix.Translate(x_pos, y_pos, 0.0f);
 	program.SetModelMatrix(modelMatrix);
-	/*
-	if ((sprite->reversedImage == true && x_velocity > 0) ||
-		(!sprite->reversedImage == false && x_velocity < 0)) {
-		sprite->reversedImage = !sprite->reversedImage;
-	}
-	*/
-	if ((sprite->reversedImage && x_acceleration > 0) ||
-		(!sprite->reversedImage && x_acceleration < 0)) {
+
+	if ((sprite->reversedImage && x_velocity > 0) ||
+		(!sprite->reversedImage && x_velocity < 0)) {
 		sprite->reversedImage = !sprite->reversedImage;
 	}
 	
-	/*if (x_acceleration > 0 && sprite->reversedImage == true || 
-		x_acceleration < 0 && sprite->reversedImage == false) {
-		sprite->reversedImage = !sprite->reversedImage;
-	}*/
-
-	else {
-		sprite->reversedImage;
-	}
-
-
 	sprite->Draw(&program);
 }
 
@@ -113,3 +98,4 @@ bool Entity::collisionInY(float y, float otherHeight) {
 
 	return (collidedTop || collidedBottom);
 }
+

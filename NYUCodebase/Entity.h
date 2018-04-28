@@ -24,6 +24,8 @@ public:
 	bool collisionInX(float x, float width);
 	bool collisionInY(float y, float height);
 
+
+
 	SheetSprite* sprite;
 	EntityType type;
 	

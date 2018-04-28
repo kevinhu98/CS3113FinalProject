@@ -72,9 +72,15 @@
     <Image Include="..\..\..\CS3113\assets\sprite_sheets\arne_sprites.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="..\..\..\..\Desktop\QB.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\..\..\..\Desktop\hw4.txt">
+    <Text Include="AITEST.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="hw4.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>
