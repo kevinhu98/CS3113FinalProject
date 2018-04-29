@@ -54,9 +54,9 @@ int main(int argc, char *argv[])
 	program.SetProjectionMatrix(projectionMatrix);
 	program.SetViewMatrix(viewMatrix);
 
-	spriteSheetTexture = LoadTexture(RESOURCE_FOLDER"arne_sprites.png", GL_NEAREST);
-	map.setSpriteSheet(spriteSheetTexture, 16, 8);
-	map.Load(RESOURCE_FOLDER"AITEST2.txt");
+	spriteSheetTexture = LoadTexture(RESOURCE_FOLDER"QB.png", GL_NEAREST);
+	map.setSpriteSheet(spriteSheetTexture, 5, 4);
+	map.Load(RESOURCE_FOLDER"finalproject1.txt");
 	
 	Utilities.event = &event;
 	Utilities.keys = keys;

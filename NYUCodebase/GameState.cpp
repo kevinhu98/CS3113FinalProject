@@ -5,12 +5,13 @@
 #define FRICTION 0.99f
 
 GameState::GameState() {}
-std::unordered_set<int> solidTiles = { 0,1,17,33,34 };
+//std::unordered_set<int> solidTiles = { 0,1,17,33,34 };
+std::unordered_set<int> solidTiles = {12};
 
 void GameState::Initialize(GameUtilities* utilities, FlareMap* map) {
 	this->Utilities = utilities;
 	this->map = map;
-	sheetSprites.emplace_back(map->spriteSheetTexture, 80, map->spritesX, map->spritesY, 1.0f, map->tileSize);
+	//sheetSprites.emplace_back(map->spriteSheetTexture, , map->spritesX, map->spritesY, 1.0f, map->tileSize);
 	for (size_t i = 0; i < map->entities.size(); i++) {
 		placeEntity(map->entities[i].type, map->entities[i].x * map->tileSize + map->tileSize / 2, (map->entities[i].y - 1) * -map->tileSize - map->tileSize / 2);
 	}
@@ -18,13 +19,21 @@ void GameState::Initialize(GameUtilities* utilities, FlareMap* map) {
 
 void GameState::placeEntity(std::string type, float x, float y) {
 	if (type == "PLAYER") {
-		player = new Entity(x, y, &sheetSprites[0], PLAYER);
+		SheetSprite sprite(map->spriteSheetTexture, 2, 5, 4, 1.0f, map->tileSize);
+		player = new Entity(x, y, &sprite, PLAYER);
 		entities.push_back(player);
 	}
-	else if (type == "ENEMY") {		
-		Entity* enemy = new Entity(x, y, &sheetSprites[0], ENEMY);
+	else if (type == "CHASER") {		
+		SheetSprite sprite(map->spriteSheetTexture, 5, 5, 4, 1.0f, map->tileSize);
+		Entity* enemy = new Entity(x, y, &sprite, ENEMY);
 		//enemy->x_acceleration = 5; //150
 		enemy->x_velocity = 1;
+		entities.push_back(enemy);
+	}
+	else if (type == "GREEN_DOWN") {
+		SheetSprite sprite(map->spriteSheetTexture, 6, 5, 4, 1.0f, map->tileSize);
+		Entity* enemy = new Entity(x, y, &sprite, ENEMY); //should be shooter
+		enemy->y_acceleration = GRAVITY;
 		entities.push_back(enemy);
 	}
 }
@@ -46,11 +55,9 @@ void GameState::ProcessInput() {
 		}
 		else if (event.type == SDL_KEYUP) {
 			if (event.key.keysym.scancode == SDL_SCANCODE_UP) {
-				//player->x_acceleration = 0.0f;
 				player->x_velocity = 0;
 			}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_LEFT || event.key.keysym.scancode == SDL_SCANCODE_RIGHT) {
-				//player->x_acceleration = 0.0f;
 				player->x_velocity = 0;
 			}
 		}
@@ -85,7 +92,6 @@ void GameState::ApplyPhysics(Entity& entity, float elapsed){
 	//entity.x_velocity = lerp(entity.x_velocity, 0.0f, elapsed * FRICTION);
 	//entity.y_velocity = lerp(entity.y_velocity, 0.0f, elapsed * FRICTION);
 
-
 	//acceleration
 	entity.x_velocity += entity.x_acceleration * elapsed;
 	entity.y_velocity += entity.y_acceleration * elapsed;
@@ -116,19 +122,19 @@ void GameState::Update(float elapsed) {
 		if (entities[i]->type == ENEMY) {
 			CheckForTurn(*entities[i]);
 			CheckForJump(*entities[i]);
-			/*
-			if (entities[i]->collidedLeft || entities[i]->collidedRight) {
-				entities[i]->x_velocity *= -1;
-			}
-			*/
 		}
 
 		//death / enemy collision *LATER WRITE RESET CODE*
 		if (player->collisionEntity(entities[i]) && entities[i]->type == ENEMY) {
-			player->x_pos = map->tileSize / 2;
-			player->y_pos = 0.2;
-			player->x_velocity = 0;
-			player->x_velocity = 0;
+			resetPlayer();
+		}
+
+		for (size_t j = 0; j < entities.size(); ++j) {
+			if (entities[j]->collisionEntity(entities[i]) == true
+				&& entities[i]->type == ENEMY && entities[j]->type == ENEMY) {
+				entities[i]->x_velocity *= -1;
+				entities[j]->x_velocity *= -1;
+			}
 		}
 	}
 	//bounds check + keeps in bounds
@@ -140,7 +146,6 @@ void GameState::Update(float elapsed) {
 		player->x_velocity = 0;
 		player->x_pos = map->tileSize*map->mapWidth - map->tileSize / 2;
 	}
-		
 	
 }
 
@@ -229,23 +234,20 @@ void GameState::CollideWithMapY(Entity& entity) {
 void GameState::CheckForTurn(Entity& entity) {
 	if (entity.sprite->reversedImage == true) { // if entity is walking left off cliff
 		int leftCheckX, leftCheckY, leftCloseX, leftCloseY;
-		map->worldToTileCoordinates(entity.x_pos - entity.width, entity.y_pos - entity.height * 3, leftCheckX, leftCheckY);
-		map->worldToTileCoordinates(entity.x_pos - entity.width / 1.95, entity.y_pos, leftCloseX, leftCloseY);
-		if (solidTiles.find(map->mapData[leftCloseY][leftCloseX] - 1) != solidTiles.end() || solidTiles.find(map->mapData[leftCheckY][leftCheckX] - 1) == solidTiles.end() ){
+		map->worldToTileCoordinates(entity.x_pos - entity.width, entity.y_pos - entity.height * 3, leftCheckX, leftCheckY); //cliff check
+		map->worldToTileCoordinates(entity.x_pos - entity.width * 0.75, entity.y_pos + entity.height * 0.45, leftCloseX, leftCloseY); //wall check
+		if (solidTiles.find(map->mapData[leftCloseY][leftCloseX] - 1) != solidTiles.end() 
+			|| solidTiles.find(map->mapData[leftCheckY][leftCheckX] - 1) == solidTiles.end()) {
 			entity.x_velocity *= -1;
 		}
 	}
 	else {
 		int rightCheckX, rightCheckY, rightCloseX, rightCloseY;
-		map->worldToTileCoordinates(entity.x_pos - entity.width / 1.8, entity.y_pos - entity.height * 2, rightCheckX, rightCheckY);
-		map->worldToTileCoordinates(entity.x_pos + entity.width / 1.95, entity.y_pos, rightCloseX, rightCloseY);
-		if (solidTiles.find(map->mapData[rightCloseY][rightCloseX] - 1) != solidTiles.end()) {
+		map->worldToTileCoordinates(entity.x_pos + entity.width , entity.y_pos - entity.height * 3, rightCheckX, rightCheckY);
+		map->worldToTileCoordinates(entity.x_pos + entity.width / 1.95, entity.y_pos + entity.width / 2.05, rightCloseX, rightCloseY);
+		if (solidTiles.find(map->mapData[rightCloseY][rightCloseX] - 1) != solidTiles.end()
+			|| solidTiles.find(map->mapData[rightCheckY][rightCheckX] - 1) == solidTiles.end()) {
 			entity.x_velocity *= -1;
-		}
-		if (solidTiles.find(map->mapData[rightCheckY][rightCheckX] - 1) == solidTiles.end()) {
-
-			//entity.x_velocity *= -1;
-		//	entity.x_acceleration *= -1;
 		}
 	}
 }
@@ -267,7 +269,7 @@ void GameState::CheckForJump(Entity& entity) {
 	else{
 		int rightFrontX, rightFrontY, rightTopX, rightTopY;
 		map->worldToTileCoordinates(entity.x_pos + entity.width * 1.5 , entity.y_pos, rightFrontX, rightFrontY);
-		map->worldToTileCoordinates(entity.x_pos + entity.width * 1.5, entity.y_pos + entity.height * 3, rightTopX, rightTopY);
+		map->worldToTileCoordinates(entity.x_pos + entity.width * 1.5, entity.y_pos + entity.height * 2, rightTopX, rightTopY);
 	
 		// Ignore invalid tile indices
 		if (rightFrontX < 0 || rightFrontY < 0 || 
@@ -280,4 +282,11 @@ void GameState::CheckForJump(Entity& entity) {
 			entity.y_velocity = 2.5f;
 		}
 	}
+}
+
+void GameState::resetPlayer() {
+	player->x_pos = map->tileSize / 2;
+	player->y_pos = -3.8;
+	player->x_velocity = 0;
+	player->y_velocity = 0;
 }

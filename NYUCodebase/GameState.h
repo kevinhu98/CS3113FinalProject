@@ -28,9 +28,9 @@ public:
 	void CheckForTurn(Entity& entity);
 	void CheckForJump(Entity& entity);
 
+	void resetPlayer();
 	Entity* player;
 	std::vector<Entity*> entities;
-	std::vector<SheetSprite> sheetSprites;
 	FlareMap* map;
 
 	Matrix modelMatrix;
