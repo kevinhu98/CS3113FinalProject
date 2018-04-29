@@ -2,18 +2,20 @@
 #include "Shooter.h"
 #include "ShaderProgram.h"
 
-ShooterType::ShooterType() {}
+Shooter::Shooter() {}
 
-ShooterType::ShooterType(int ShooterType, int ShooterDirection) :
-	ShooterType(ShooterType), ShooterDirection(ShooterDirection), direction(DIRECTION_UP) {
+Shooter::Shooter(ShooterType type, ShooterDirection ShooterDirection) :
+	type(type), direction(ShooterDirection) {
 
-	if (ShooterType == SHOOTER_RED) {
-		shootSpeed = 0.5;
+	if (type == SHOOTER_RED) {
+		shootInterval = 0.5;
 	}
-	else if (ShooterType == SHOOTER_YELLOW) {
-		shootSpeed = 1.0;
+	else if (type == SHOOTER_YELLOW) {
+		shootInterval = 1.0;
 	}
-	else { shootSpeed = 1.5;  }
+	else { shootInterval = 1.5;}
+	
+	x_acceleration = 9.8; // cancels out gravity
 }
 
 
