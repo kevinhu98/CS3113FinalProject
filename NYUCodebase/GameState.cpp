@@ -230,19 +230,22 @@ void GameState::CheckForTurn(Entity& entity) {
 	if (entity.sprite->reversedImage == true) { // if entity is walking left off cliff
 		int leftCheckX, leftCheckY, leftCloseX, leftCloseY;
 		map->worldToTileCoordinates(entity.x_pos - entity.width, entity.y_pos - entity.height * 3, leftCheckX, leftCheckY);
-		map->worldToTileCoordinates(entity.x_pos - entity.width / 1.95, entity.y_pos - entity.height / 2.05, leftCloseX, leftCloseY);
-		if (solidTiles.find(map->mapData[leftCloseY][leftCloseX] - 1) != solidTiles.end()
-			|| solidTiles.find(map->mapData[leftCheckY][leftCheckX] - 1) == solidTiles.end()) {
+		map->worldToTileCoordinates(entity.x_pos - entity.width / 1.95, entity.y_pos, leftCloseX, leftCloseY);
+		if (solidTiles.find(map->mapData[leftCloseY][leftCloseX] - 1) != solidTiles.end() || solidTiles.find(map->mapData[leftCheckY][leftCheckX] - 1) == solidTiles.end() ){
 			entity.x_velocity *= -1;
 		}
 	}
 	else {
 		int rightCheckX, rightCheckY, rightCloseX, rightCloseY;
-		map->worldToTileCoordinates(entity.x_pos - entity.width, entity.y_pos - entity.height * 3, rightCheckX, rightCheckY);
+		map->worldToTileCoordinates(entity.x_pos - entity.width / 1.8, entity.y_pos - entity.height * 2, rightCheckX, rightCheckY);
 		map->worldToTileCoordinates(entity.x_pos + entity.width / 1.95, entity.y_pos, rightCloseX, rightCloseY);
-		if (solidTiles.find(map->mapData[rightCloseY][rightCloseX] - 1) != solidTiles.end()
-			|| solidTiles.find(map->mapData[rightCheckY][rightCheckX] - 1) == solidTiles.end()) {
+		if (solidTiles.find(map->mapData[rightCloseY][rightCloseX] - 1) != solidTiles.end()) {
 			entity.x_velocity *= -1;
+		}
+		if (solidTiles.find(map->mapData[rightCheckY][rightCheckX] - 1) == solidTiles.end()) {
+
+			//entity.x_velocity *= -1;
+		//	entity.x_acceleration *= -1;
 		}
 	}
 }
