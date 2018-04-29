@@ -10,6 +10,7 @@
 class MainMenu {
 public: 
 	MainMenu();
+	void Initialize(GameUtilities* utilities, GLuint fontTexture);
 	void Render();
 	void Update(float elapsed);
 	void ProcessInput();
@@ -18,6 +19,7 @@ public:
 	Matrix modelMatrix;
 	Matrix viewMatrix;
 
+	GLuint fontTexture; 
 	GameUtilities* Utilities;
 
 };

@@ -1,8 +1,13 @@
 #include "MainMenu.h"
-#include "Main.cpp"
+#include "mode.h"
 
 
 MainMenu::MainMenu() {}
+
+void MainMenu::Initialize(GameUtilities *utilities, GLuint fontTexture) {
+	this->fontTexture = fontTexture;
+	this->Utilities = utilities;
+}
 
 void MainMenu::ProcessInput() {
 	SDL_Event& event = *Utilities->event;
@@ -32,8 +37,12 @@ void MainMenu::Render() {
 	ShaderProgram& program = *Utilities->shader;
 
 	modelMatrix.Identity();
+	viewMatrix.Identity();
 	program.SetModelMatrix(modelMatrix);
+	program.SetViewMatrix(viewMatrix);
 
 
+	DrawText(&program, modelMatrix, fontTexture, "Game Programming Final", 0.4f, -0.20f, -2.0f, 1.5f);
+	DrawText(&program, modelMatrix, fontTexture, "Press SPACE to Start", 0.25f, -0.15f, -1.0f, 1.0f);
 
 }

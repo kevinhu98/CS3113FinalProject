@@ -80,6 +80,7 @@
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="GameUtilities.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="SheetSprite.cpp" />
@@ -89,6 +90,8 @@
     <ClInclude Include="FlareMap.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GameUtilities.h" />
+    <ClInclude Include="mode.h" />
+    <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SheetSprite.h" />

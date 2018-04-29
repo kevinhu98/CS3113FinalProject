@@ -7,6 +7,8 @@
 #include "GameState.h"
 #include "FlareMap.h"
 #include "GameUtilities.h"
+#include "MainMenu.h"
+#include "mode.h"
 
 #ifdef _WINDOWS
 #define RESOURCE_FOLDER ""
@@ -20,14 +22,18 @@
 
 SDL_Window* displayWindow;
 
+GameMode mode;
+
 ShaderProgram program;
 Matrix projectionMatrix;
 Matrix modelMatrix;
 Matrix viewMatrix;
 GLuint spriteSheetTexture;
+GLuint fontTexture;
 const Uint8 *keys = SDL_GetKeyboardState(NULL);
 SDL_Event event;
 GameState gameState;
+MainMenu menu;
 bool done = false;
 FlareMap map;
 GameUtilities Utilities;
@@ -55,6 +61,8 @@ int main(int argc, char *argv[])
 	program.SetViewMatrix(viewMatrix);
 
 	spriteSheetTexture = LoadTexture(RESOURCE_FOLDER"QB.png", GL_NEAREST);
+	fontTexture = LoadTexture(RESOURCE_FOLDER"font.png", GL_NEAREST);
+
 	map.setSpriteSheet(spriteSheetTexture, 5, 4);
 	map.Load(RESOURCE_FOLDER"finalproject1.txt");
 	
@@ -66,6 +74,9 @@ int main(int argc, char *argv[])
 	Utilities.done = &done;
 	Utilities.spriteSheets.push_back(spriteSheetTexture);
 	gameState.Initialize(&Utilities, &map);
+	menu.Initialize(&Utilities, fontTexture);
+
+	mode = STATE_MAIN_MENU;
 	
 	float lastFrameTicks = 0.0f;
 	float accumulator = 0.0f;
@@ -75,7 +86,17 @@ int main(int argc, char *argv[])
 		float elapsed = ticks - lastFrameTicks;
 		lastFrameTicks = ticks;
 		
-		gameState.ProcessInput();
+		switch (mode) {
+			case STATE_MAIN_MENU:
+				menu.ProcessInput();
+				break;
+			case STATE_GAME_LEVEL:
+				gameState.ProcessInput();
+				break;
+			case STATE_GAME_OVER:
+				break;
+		}
+
 	
 		elapsed += accumulator;
 		if (elapsed < FIXED_TIMESTEP) {
@@ -84,14 +105,36 @@ int main(int argc, char *argv[])
 		}
 
 		while (elapsed >= FIXED_TIMESTEP) {
-			gameState.Update(FIXED_TIMESTEP);
+
+			switch (mode) {
+			case STATE_MAIN_MENU:
+				//gameState.Update(FIXED_TIMESTEP);
+				menu.Update(FIXED_TIMESTEP);
+				break;
+			case STATE_GAME_LEVEL:
+				gameState.Update(FIXED_TIMESTEP);
+				break;
+			case STATE_GAME_OVER:
+				break;
+			}
+
 			elapsed -= FIXED_TIMESTEP;
 		}
 		accumulator = elapsed;
 		
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		gameState.Render();
+		switch (mode) {
+		case STATE_MAIN_MENU:
+			gameState.Render();
+			menu.Render();
+			break;
+		case STATE_GAME_LEVEL:
+			gameState.Render();
+			break;
+		case STATE_GAME_OVER:
+			break;
+		}
 
 		SDL_GL_SwapWindow(displayWindow);
 	}
