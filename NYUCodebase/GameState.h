@@ -19,6 +19,9 @@ public:
 	//void Reset();
 	void placeEntity(std::string type, float x, float y);
 	void ApplyPhysics(Entity& entity, float elapsed);
+	
+	void checkBulletCollisionMap(Bullet& bullet);
+
 	void CollideWithMapX(Entity& entity);
 	void CollideWithMapY(Entity& entity);
 

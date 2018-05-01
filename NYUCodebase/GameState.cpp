@@ -35,10 +35,12 @@ void GameState::placeEntity(std::string type, float x, float y) {
 		enemy->x_velocity = 1;
 		entities.push_back(enemy);
 	}
+	/*  //platform currently in development
 	else if (type == "PLATFORM") {
 		Platform* platform = new Platform(x, y, 0.5, 0, map->spriteSheetTexture);
 		entities.push_back(platform);
 	}
+	*/
 	else if (type == "GREEN_DOWN") {
 		Shooter* enemy = new Shooter(x, y, GREEN, DOWN, map->spriteSheetTexture);//should be shooter
 		entities.push_back(enemy);
@@ -125,47 +127,48 @@ void GameState::Update(float elapsed) {
 
 	for (size_t i = 0; i < entities.size(); ++i) {
 		ApplyPhysics(*entities[i], elapsed); //enemy movement
-	}
 
-	for (size_t i = 0; i < entities.size(); ++i){
+
+
 		if (entities[i]->type == ENEMY) { // AI
 			CheckForTurn(*entities[i]);
 			CheckForJump(*entities[i]);
 		}
 
-		//death when touching enemy
-		if (player->collisionEntity(entities[i]) && entities[i]->type == ENEMY) {
-			resetPlayer();
-		}
+			for (size_t j = 0; j < entities.size(); ++j) { // enemies bounce off each other
+				if (entities[i]->collisionEntity(entities[j]) == true) {
+					entities[i]->x_velocity *= -1;
+					entities[j]->x_velocity *= -1;
+				}
+			}
 
-		if (entities[i]->type == SHOOTER) {
-			Shooter* shooter = ((Shooter*)entities[i]);
-			for (size_t i = 0; i < shooter->bullets.size(); ++i) {
-				if (shooter->bullets[i].checkCollisionPlayer(player)) {
-					resetPlayer();
+			//death when touching enemy
+			if (player->collisionEntity(entities[i]) && entities[i]->type == ENEMY) {
+				resetPlayer();
+			}
+
+			if (entities[i]->type == SHOOTER) {
+				Shooter* shooter = ((Shooter*)entities[i]);
+				for (size_t i = 0; i < shooter->bullets.size(); ++i) {
+					checkBulletCollisionMap(shooter->bullets[i]);
+					if (shooter->bullets[i].checkCollisionPlayer(player)) {
+						resetPlayer();
+
+					}
 				}
 			}
 		}
-
-		for (size_t j = 0; j < entities.size(); ++j) { // enemies bounce off each other
-			if (entities[j]->collisionEntity(entities[i]) == true
-				&& entities[i]->type == ENEMY && entities[j]->type == ENEMY) {
-				entities[i]->x_velocity *= -1;
-				entities[j]->x_velocity *= -1;
-			}
+		//bounds check + keeps in bounds
+		if (player->x_pos - player->width / 2 < 0) { //left bound
+			player->x_velocity = 0;
+			player->x_pos = map->tileSize / 2;
+		}
+		else if (player->x_pos + player->width / 2 > (map->tileSize*map->mapWidth)) { //right bound
+			player->x_velocity = 0;
+			player->x_pos = map->tileSize*map->mapWidth - map->tileSize / 2;
 		}
 	}
-	//bounds check + keeps in bounds
-	if (player->x_pos - player->width / 2 < 0) { //left bound
-		player->x_velocity = 0;
-		player->x_pos = map->tileSize / 2;
-	}
-	else if (player->x_pos + player->width / 2 > (map->tileSize*map->mapWidth)) { //right bound
-		player->x_velocity = 0;
-		player->x_pos = map->tileSize*map->mapWidth - map->tileSize / 2;
-	}
-	
-}
+
 
 void GameState::Render() {
 	ShaderProgram& program = *Utilities->shader;
@@ -307,4 +310,13 @@ void GameState::resetPlayer() {
 	player->y_pos = -3.8;
 	player->x_velocity = 0;
 	player->y_velocity = 0;
+}
+
+void GameState::checkBulletCollisionMap(Bullet& bullet) {
+	if (!bullet.alive) return;
+	int botX, botY;
+	map->worldToTileCoordinates(bullet.x_pos, bullet.y_pos - bullet.height / 1.95, botX, botY);
+	if ((solidTiles.find(map->mapData[botY][botX] - 1) != solidTiles.end())) {
+		bullet.alive = false;
+	}
 }
