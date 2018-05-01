@@ -4,20 +4,29 @@
 #include <vector>
 #include <stdio.h>
 #include "SheetSprite.h"
+#include "Bullet.h"
 
-enum ShooterType { SHOOTER_RED, SHOOTER_GREEN, SHOOTER_YELLOW };
+#define MAX_BULLETS 50
+
+enum ShooterType { RED, GREEN, YELLOW };
 enum ShooterDirection { UP, DOWN, LEFT, RIGHT };
 
 class Shooter: public Entity {
 public: 
 	Shooter();
-	Shooter(int ShooterType, int ShooterDirection);
-	~Shooter();
-
-	float shootSpeed;
-	ShooterType shooterType;
-	ShooterDirection direction;
+	Shooter(float x, float y, ShooterType color, ShooterDirection ShooterDirection, int textureID);
+	//~Shooter();
+	void shootBullet(float x_pos, float y_pos, float x_velocity, float y_velocity);
+	void update(float elapsed);
+	void render(ShaderProgram& program) override;
+	float accum = 0;
+	float shootInterval;
+	int bulletIndex = 0;
 	
-}
+	std::vector<Bullet> bullets;
+
+	ShooterType color;
+	ShooterDirection direction;
+};
 
 #endif

@@ -2,7 +2,7 @@
 #define GameState_h
 
 #include <stdio.h>
-#include "Entity.h"
+#include "Bullet.h"
 #include "SheetSprite.h"
 #include "FlareMap.h"
 #include "GameUtilities.h"

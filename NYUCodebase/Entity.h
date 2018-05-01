@@ -5,29 +5,27 @@
 #include <stdio.h>
 #include "SheetSprite.h"
 
-enum EntityType{ PLAYER, ENEMY };
+enum EntityType{ PLAYER, ENEMY, SHOOTER, BULLET, PLATFORM };
 
 class Entity {
 public:
 	Entity();
 	Entity(float x_pos, float y_pos,const SheetSprite* sprite, EntityType type);
 	~Entity();
-	
-	//void die();
+
 	void setSprite(SheetSprite* newSprite);
-	//void render(ShaderProgram &program, Matrix& modelMatrix);
-	void render(ShaderProgram &program);
-	void update(float elapsed);
+	virtual void render(ShaderProgram &program);
+	virtual void update(float elapsed);
 	
-	bool Entity::collisionEntity(Entity* other);
+	bool collisionEntity(Entity* other);
 
 	bool collisionInX(float x, float width);
 	bool collisionInY(float y, float height);
 
-
-
 	SheetSprite* sprite;
 	EntityType type;
+
+
 	
 	float x_pos;
 	float y_pos;

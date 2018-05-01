@@ -1,9 +1,11 @@
 #include "Entity.h"
+#include "Platform.h"
 #include "ShaderProgram.h"
+#include "Bullet.h"
 
 #define DELTA 0.0001f
 
-Entity::Entity() {}
+Entity::Entity() : x_velocity(0), y_velocity(0) {}
 
 Entity::~Entity() {
 	if (this->sprite != nullptr) {
@@ -17,7 +19,6 @@ Entity::Entity(float x_pos, float y_pos, const SheetSprite* sprite, EntityType t
 	height = sprite->size;
 
 	this->sprite = new SheetSprite(*sprite);
-	
 }
 
 void Entity::setSprite(SheetSprite* newSprite) {

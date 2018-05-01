@@ -47,7 +47,7 @@ data=
 [ObjectsLayer]
 # PLAYER
 type=PLAYER
-location=0,21,1,1
+location=0,22,1,1
 
 [ObjectsLayer]
 # CHASER
@@ -57,12 +57,12 @@ location=5,22,1,1
 [ObjectsLayer]
 # GREEN_DOWN
 type=GREEN_DOWN
-location=26,16,1,1
+location=0,14,1,1
 
 [ObjectsLayer]
 # GREEN_DOWN
 type=GREEN_DOWN
-location=26,14,1,1
+location=27,14,1,1
 
 [ObjectsLayer]
 # GREEN_DOWN
@@ -87,7 +87,7 @@ location=32,16,1,1
 [ObjectsLayer]
 # GREEN_DOWN
 type=GREEN_DOWN
-location=33,13,1,1
+location=33,14,1,1
 
 [ObjectsLayer]
 # GREEN_DOWN
@@ -97,12 +97,12 @@ location=34,13,1,1
 [ObjectsLayer]
 # GREEN_DOWN
 type=GREEN_DOWN
-location=34,17,1,1
+location=35,17,1,1
 
 [ObjectsLayer]
 # GREEN_DOWN
 type=GREEN_DOWN
-location=36,10,1,1
+location=36,11,1,1
 
 [ObjectsLayer]
 # GREEN_DOWN
@@ -135,17 +135,37 @@ type=CHASER
 location=61,21,1,1
 
 [ObjectsLayer]
-# GREEN_LEFT
-type=GREEN_LEFT
-location=25,18,1,1
-
-[ObjectsLayer]
 # PLATFORM
 type=PLATFORM
-location=69,18,4,1
+location=5,15,1,1
 
 [ObjectsLayer]
 # CHASER
 type=CHASER
 location=23,27,1,1
+
+[ObjectsLayer]
+# PLATFORM
+type=PLATFORM
+location=6,15,1,1
+
+[ObjectsLayer]
+# PLATFORM
+type=PLATFORM
+location=7,15,1,1
+
+[ObjectsLayer]
+# PLATFORM
+type=PLATFORM
+location=8,15,1,1
+
+[ObjectsLayer]
+# CHASER
+type=CHASER
+location=58,21,1,1
+
+[ObjectsLayer]
+# CHASER
+type=CHASER
+location=52,21,1,1
 

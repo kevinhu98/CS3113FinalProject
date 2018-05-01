@@ -1,21 +1,26 @@
 #include "GameState.h"
+#include "Shooter.h"
+#include "Platform.h"
 #include <unordered_set>
+
 #define GRAVITY 9.8f
 #define ACCELERATION 0.5f
 #define FRICTION 0.99f
+#define MAX_BULLETS 100
 
 GameState::GameState() {}
 //std::unordered_set<int> solidTiles = { 0,1,17,33,34 };
-std::unordered_set<int> solidTiles = {12};
+std::unordered_set<int> solidTiles = {11,12};
 
 void GameState::Initialize(GameUtilities* utilities, FlareMap* map) {
 	this->Utilities = utilities;
 	this->map = map;
 	//sheetSprites.emplace_back(map->spriteSheetTexture, , map->spritesX, map->spritesY, 1.0f, map->tileSize);
 	for (size_t i = 0; i < map->entities.size(); i++) {
-		placeEntity(map->entities[i].type, map->entities[i].x * map->tileSize + map->tileSize / 2, (map->entities[i].y - 1) * -map->tileSize - map->tileSize / 2);
+		placeEntity(map->entities[i].type, map->entities[i].x * map->tileSize + map->tileSize / 2, -map->entities[i].y * map->tileSize + map->tileSize / 2);
 	}
 }
+
 
 void GameState::placeEntity(std::string type, float x, float y) {
 	if (type == "PLAYER") {
@@ -30,10 +35,12 @@ void GameState::placeEntity(std::string type, float x, float y) {
 		enemy->x_velocity = 1;
 		entities.push_back(enemy);
 	}
+	else if (type == "PLATFORM") {
+		Platform* platform = new Platform(x, y, 0.5, 0, map->spriteSheetTexture);
+		entities.push_back(platform);
+	}
 	else if (type == "GREEN_DOWN") {
-		SheetSprite sprite(map->spriteSheetTexture, 6, 5, 4, 1.0f, map->tileSize);
-		Entity* enemy = new Entity(x, y, &sprite, ENEMY); //should be shooter
-		enemy->y_acceleration = GRAVITY;
+		Shooter* enemy = new Shooter(x, y, GREEN, DOWN, map->spriteSheetTexture);//should be shooter
 		entities.push_back(enemy);
 	}
 }
@@ -115,21 +122,32 @@ void GameState::Update(float elapsed) {
 		ApplyPhysics(*player, elapsed);
 		return;
 	}
-	
+
 	for (size_t i = 0; i < entities.size(); ++i) {
-		ApplyPhysics(*entities[i], elapsed);
-		//enemy movement
-		if (entities[i]->type == ENEMY) {
+		ApplyPhysics(*entities[i], elapsed); //enemy movement
+	}
+
+	for (size_t i = 0; i < entities.size(); ++i){
+		if (entities[i]->type == ENEMY) { // AI
 			CheckForTurn(*entities[i]);
 			CheckForJump(*entities[i]);
 		}
 
-		//death / enemy collision *LATER WRITE RESET CODE*
+		//death when touching enemy
 		if (player->collisionEntity(entities[i]) && entities[i]->type == ENEMY) {
 			resetPlayer();
 		}
 
-		for (size_t j = 0; j < entities.size(); ++j) {
+		if (entities[i]->type == SHOOTER) {
+			Shooter* shooter = ((Shooter*)entities[i]);
+			for (size_t i = 0; i < shooter->bullets.size(); ++i) {
+				if (shooter->bullets[i].checkCollisionPlayer(player)) {
+					resetPlayer();
+				}
+			}
+		}
+
+		for (size_t j = 0; j < entities.size(); ++j) { // enemies bounce off each other
 			if (entities[j]->collisionEntity(entities[i]) == true
 				&& entities[i]->type == ENEMY && entities[j]->type == ENEMY) {
 				entities[i]->x_velocity *= -1;
