@@ -17,11 +17,10 @@ public:
 
 	float x_pos;
 	float y_pos;
-	float x_velocity;
-	float y_velocity;
-	float x_acceleration;
-	float y_acceleration;
 
+	float rotation;
+	float animationTime; 
+	float animationValue;
 
 	Matrix modelMatrix;
 	Matrix viewMatrix;

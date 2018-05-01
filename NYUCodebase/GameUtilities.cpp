@@ -24,6 +24,21 @@ float easeOut(float from, float to, float time) {
 	return (1.0f - tVal)*from + tVal * to;
 }
 
+//Ease In and then ease out for the second half of animation
+float easeInOut(float from, float to, float time) {
+	float tVal;
+	if (time > 0.5) {
+		float oneMinusT = 1.0f - ((0.5f - time)*-2.0f);
+		tVal = 1.0f - ((oneMinusT * oneMinusT * oneMinusT * oneMinusT *
+			oneMinusT) * 0.5f);
+	}
+	else {
+		time *= 2.0;
+		tVal = (time*time*time*time*time) / 2.0;
+	}
+	return (1.0f - tVal)*from + tVal * to;
+}
+
 //Ease out with a bit of a bounce
 float easeOutElastic(float from, float to, float time) {
 	float p = 0.3f;

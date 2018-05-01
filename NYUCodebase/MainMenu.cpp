@@ -3,7 +3,7 @@
 
 
 MainMenu::MainMenu() :
-	x_pos(-2.0), y_pos(1.5), x_velocity(3.5), y_velocity(0.0), x_acceleration(0), y_acceleration(0) {}
+	x_pos(-2.0), y_pos(1.5), rotation(45), animationTime(0), animationValue(0) {}
 
 void MainMenu::Initialize(GameUtilities *utilities, GLuint fontTexture) {
 	this->fontTexture = fontTexture;
@@ -32,14 +32,12 @@ void MainMenu::ProcessInput() {
 
 void MainMenu::Update(float elapsed) {
 	//Animation
-	x_velocity = easeOutElastic(x_velocity, 0.0f, elapsed * 0.4); 
-	y_velocity = easeOutElastic(y_velocity, 0.0f, elapsed * 0.4); 
+	animationTime += elapsed;
+	animationValue = mapValue(animationTime, 0.0, 2.0, 0.0, 1.0);
+	y_pos = easeOutElastic(4.0, 1.75, animationValue);
 
-	x_velocity += x_acceleration * elapsed;
-	y_velocity += y_acceleration * elapsed;
+	rotation = easeOutElastic(rotation, 0.0f, elapsed * 0.4);
 
-	x_pos += x_velocity * elapsed;
-	y_pos += y_velocity * elapsed;
 }
 
 void MainMenu::Render() {
@@ -47,6 +45,7 @@ void MainMenu::Render() {
 
 	modelMatrix.Identity();
 	viewMatrix.Identity();
+	//modelMatrix.Rotate(rotation);
 	program.SetModelMatrix(modelMatrix);
 	program.SetViewMatrix(viewMatrix);
 
