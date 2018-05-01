@@ -15,6 +15,13 @@ public:
 	void Update(float elapsed);
 	void ProcessInput();
 
+	float x_pos;
+	float y_pos;
+	float x_velocity;
+	float y_velocity;
+	float x_acceleration;
+	float y_acceleration;
+
 
 	Matrix modelMatrix;
 	Matrix viewMatrix;

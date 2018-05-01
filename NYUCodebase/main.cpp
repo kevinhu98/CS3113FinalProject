@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 				gameState.Update(FIXED_TIMESTEP);
 				break;
 			case STATE_GAME_OVER:
-				break;
+				break; 
 			}
 
 			elapsed -= FIXED_TIMESTEP;

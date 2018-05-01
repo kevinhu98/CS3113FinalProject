@@ -25,6 +25,10 @@ public:
 };
 
 float lerp(float v0, float v1, float t);
+float easeIn(float from, float to, float time);
+float easeOut(float from, float to, float time);
+float easeOutElastic(float from, float to, float time);
+float mapValue(float value, float srcMin, float srcMax, float dstMin, float dstMax);
 
 void DrawText(ShaderProgram *program, Matrix modelMatrix, int fontTexture, std::string text, float size, float spacing, float x, float y);
 
