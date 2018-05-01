@@ -29,9 +29,16 @@ void GameState::placeEntity(std::string type, float x, float y) {
 		player = new Entity(x, y, &sprite, PLAYER);
 		entities.push_back(player);
 	}
-	else if (type == "CHASER") {		
+	else if (type == "CHASER1") {		
 		SheetSprite sprite(map->spriteSheetTexture, 5, 5, 4, 1.0f, map->tileSize);
-		Entity* enemy = new Entity(x, y, &sprite, ENEMY);
+		Entity* enemy = new Entity(x, y, &sprite, CHASER1);
+		//enemy->x_acceleration = 5; //150
+		enemy->x_velocity = 1;
+		entities.push_back(enemy);
+	}
+	else if (type == "CHASER2") {
+		SheetSprite sprite(map->spriteSheetTexture, 5, 5, 4, 1.0f, map->tileSize);
+		Entity* enemy = new Entity(x, y, &sprite, CHASER2);
 		//enemy->x_acceleration = 5; //150
 		enemy->x_velocity = 1;
 		entities.push_back(enemy);
@@ -42,10 +49,63 @@ void GameState::placeEntity(std::string type, float x, float y) {
 		entities.push_back(platform);
 	}
 	*/
+
+	//DOWN
 	else if (type == "GREEN_DOWN") {
 		Shooter* enemy = new Shooter(x, y, GREEN, DOWN, map->spriteSheetTexture);//should be shooter
 		entities.push_back(enemy);
 	}
+	else if (type == "YELLOW_DOWN") {
+		Shooter* enemy = new Shooter(x, y, YELLOW, DOWN, map->spriteSheetTexture);//should be shooter
+		entities.push_back(enemy);
+	}
+	else if (type == "RED_DOWN") {
+		Shooter* enemy = new Shooter(x, y, RED, DOWN, map->spriteSheetTexture);//should be shooter
+		entities.push_back(enemy);
+	}
+
+	//RIGHT
+	else if (type == "GREEN_RIGHT") {
+		Shooter* enemy = new Shooter(x, y, GREEN, RIGHT, map->spriteSheetTexture);//should be shooter
+		entities.push_back(enemy);
+	}
+	else if (type == "YELLOW_RIGHT") {
+		Shooter* enemy = new Shooter(x, y, YELLOW, RIGHT, map->spriteSheetTexture);//should be shooter
+		entities.push_back(enemy);
+	}
+	else if (type == "RED_RIGHT") {
+		Shooter* enemy = new Shooter(x, y, RED, RIGHT, map->spriteSheetTexture);//should be shooter
+		entities.push_back(enemy);
+	}
+
+	//LEFT
+	else if (type == "GREEN_LEFT") {
+		Shooter* enemy = new Shooter(x, y, GREEN, LEFT, map->spriteSheetTexture);//should be shooter
+		entities.push_back(enemy);
+	}
+	else if (type == "YELLOW_LEFT") {
+		Shooter* enemy = new Shooter(x, y, YELLOW, LEFT, map->spriteSheetTexture);//should be shooter
+		entities.push_back(enemy);
+	}
+	else if (type == "RED_LEFT") {
+		Shooter* enemy = new Shooter(x, y, RED, LEFT, map->spriteSheetTexture);//should be shooter
+		entities.push_back(enemy);
+	}
+
+	//UP
+	else if (type == "GREEN_UP") {
+		Shooter* enemy = new Shooter(x, y, GREEN, UP, map->spriteSheetTexture);//should be shooter
+		entities.push_back(enemy);
+	}
+	else if (type == "YELLOW_UP") {
+		Shooter* enemy = new Shooter(x, y, YELLOW, UP, map->spriteSheetTexture);//should be shooter
+		entities.push_back(enemy);
+	}
+	else if (type == "RED_UP") {
+		Shooter* enemy = new Shooter(x, y, RED, UP, map->spriteSheetTexture);//should be shooter
+		entities.push_back(enemy);
+	}
+	
 }
 
 void GameState::ProcessInput() {
@@ -122,7 +182,7 @@ void GameState::Update(float elapsed) {
 	//updates only occur when player moves
 	if (player->x_velocity < 0.1 && player->x_velocity > -0.1 
 		&& player->y_velocity < 0.1 && player->y_velocity > -0.1) {
-		ApplyPhysics(*player, elapsed);
+			ApplyPhysics(*player, elapsed);
 		return;
 	}
 
@@ -131,10 +191,14 @@ void GameState::Update(float elapsed) {
 
 
 
-		if (entities[i]->type == ENEMY) { // AI
+		if (entities[i]->type == CHASER1) { // AI
 			CheckForTurn(*entities[i]);
 			CheckForJump(*entities[i]);
 		}
+		else if (entities[i]->type == CHASER2) {
+			CheckForTurn(*entities[i]);
+		}
+		
 
 			for (size_t j = 0; j < entities.size(); ++j) { // enemies bounce off each other
 				if (entities[i]->collisionEntity(entities[j]) == true) {
@@ -144,10 +208,11 @@ void GameState::Update(float elapsed) {
 			}
 
 			//death when touching enemy
-			if (player->collisionEntity(entities[i]) && entities[i]->type == ENEMY) {
+			if (player->collisionEntity(entities[i]) && (entities[i]->type == CHASER1 || entities[i]->type == CHASER2)) {
 				resetPlayer();
 			}
 
+			//stops drawing bullets if they touch map
 			if (entities[i]->type == SHOOTER) {
 				Shooter* shooter = ((Shooter*)entities[i]);
 				for (size_t i = 0; i < shooter->bullets.size(); ++i) {
@@ -256,23 +321,45 @@ void GameState::CollideWithMapY(Entity& entity) {
 
 void GameState::CheckForTurn(Entity& entity) {
 	if (entity.sprite->reversedImage == true) { // if entity is walking left off cliff
-		int leftCheckX, leftCheckY, leftCloseX, leftCloseY;
+		int leftCheckX, leftCheckY, leftCloseX, leftCloseY, leftPlatX, leftPlatY;
 		map->worldToTileCoordinates(entity.x_pos - entity.width, entity.y_pos - entity.height * 3, leftCheckX, leftCheckY); //cliff check
-		map->worldToTileCoordinates(entity.x_pos - entity.width * 0.75, entity.y_pos + entity.height * 0.45, leftCloseX, leftCloseY); //wall check
-		if (solidTiles.find(map->mapData[leftCloseY][leftCloseX] - 1) != solidTiles.end() 
-			|| solidTiles.find(map->mapData[leftCheckY][leftCheckX] - 1) == solidTiles.end()) {
-			entity.x_velocity *= -1;
+		map->worldToTileCoordinates(entity.x_pos - entity.width / 1.95, entity.y_pos + entity.height / 2.05, leftCloseX, leftCloseY); //wall check
+		map->worldToTileCoordinates(entity.x_pos - entity.width / 1.95, entity.y_pos - entity.height / 1.95, leftPlatX, leftPlatY);
+
+		if (entity.type == CHASER2) {
+			if (solidTiles.find(map->mapData[leftPlatY][leftPlatX] - 1) == solidTiles.end()) {
+				entity.x_velocity *= -1;
+			}
+		}
+
+		else if (entity.type == CHASER1) {
+			if (solidTiles.find(map->mapData[leftCloseY][leftCloseX] - 1) != solidTiles.end()
+				|| solidTiles.find(map->mapData[leftCheckY][leftCheckX] - 1) == solidTiles.end()) {
+				entity.x_velocity *= -1;
+			}
+			
 		}
 	}
 	else {
-		int rightCheckX, rightCheckY, rightCloseX, rightCloseY;
+		int rightCheckX, rightCheckY, rightCloseX, rightCloseY, rightPlatX, rightPlatY;
 		map->worldToTileCoordinates(entity.x_pos + entity.width , entity.y_pos - entity.height * 3, rightCheckX, rightCheckY);
 		map->worldToTileCoordinates(entity.x_pos + entity.width / 1.95, entity.y_pos + entity.width / 2.05, rightCloseX, rightCloseY);
-		if (solidTiles.find(map->mapData[rightCloseY][rightCloseX] - 1) != solidTiles.end()
-			|| solidTiles.find(map->mapData[rightCheckY][rightCheckX] - 1) == solidTiles.end()) {
-			entity.x_velocity *= -1;
+		map->worldToTileCoordinates(entity.x_pos + entity.width / 1.95, entity.y_pos - entity.height / 1.95, rightPlatX, rightPlatY);
+
+		if (entity.type == CHASER2) {
+			if (solidTiles.find(map->mapData[rightPlatY][rightPlatX] - 1) == solidTiles.end()) {
+				entity.x_velocity *= -1;
+			}
 		}
-	}
+
+		else if (entity.type == CHASER1) {
+			if (solidTiles.find(map->mapData[rightCloseY][rightCloseX] - 1) != solidTiles.end()
+				|| solidTiles.find(map->mapData[rightCheckY][rightCheckX] - 1) == solidTiles.end()) {
+				entity.x_velocity *= -1;
+			}
+			}
+		}
+	
 }
 
 void GameState::CheckForJump(Entity& entity) {
@@ -316,9 +403,42 @@ void GameState::resetPlayer() {
 
 void GameState::checkBulletCollisionMap(Bullet& bullet) {
 	if (!bullet.alive) return;
-	int botX, botY;
+	int botX, botY, rightX, rightY, leftX, leftY, topX, topY;
+	map->worldToTileCoordinates(bullet.x_pos, bullet.y_pos + bullet.height / 1.95, topX, topY);
 	map->worldToTileCoordinates(bullet.x_pos, bullet.y_pos - bullet.height / 1.95, botX, botY);
+	map->worldToTileCoordinates(bullet.x_pos - bullet.width / 1.95, bullet.y_pos, leftX, leftY);
+	map->worldToTileCoordinates(bullet.x_pos + bullet.width / 1.95, bullet.y_pos, rightX, rightY);
+	
+	//first checks if bullet is going out of bounds, prevents crash
+
+	if (botX < 0 || botY < 0 || map->mapData[botY][botX] == 0 ||
+		solidTiles.find(map->mapData[botY][botX] - 1) == solidTiles.end()) {
+		return;
+	}
+	else if (rightX < 0 || rightY < 0 || map->mapData[rightY][rightX] == 0 ||
+		solidTiles.find(map->mapData[rightY][rightX] - 1) == solidTiles.end()) {
+		return;
+	}
+	else if (leftX < 0 || leftY < 0 || map->mapData[leftY][leftX] == 0 ||
+		solidTiles.find(map->mapData[leftY][leftX] - 1) == solidTiles.end()) {
+		return;
+	}
+	else if (topX < 0 || topY < 0 || map->mapData[topY][topX] == 0 ||
+		solidTiles.find(map->mapData[topY][topX] - 1) == solidTiles.end()) {
+		return;
+	}
+	//checks all corners of bullet for map collision
+	
 	if ((solidTiles.find(map->mapData[botY][botX] - 1) != solidTiles.end())) {
+		bullet.alive = false;
+	}
+	if ((solidTiles.find(map->mapData[topY][topX] - 1) != solidTiles.end())) {
+		bullet.alive = false;
+	}
+	if ((solidTiles.find(map->mapData[leftY][leftX] - 1) != solidTiles.end())) {
+		bullet.alive = false;
+	}
+	if ((solidTiles.find(map->mapData[rightY][rightX] - 1) != solidTiles.end())) {
 		bullet.alive = false;
 	}
 }

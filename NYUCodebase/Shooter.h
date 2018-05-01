@@ -19,7 +19,7 @@ public:
 	void shootBullet(float x_pos, float y_pos, float x_velocity, float y_velocity);
 	void update(float elapsed);
 	void render(ShaderProgram& program) override;
-	float accum = 0;
+	float accum = 0; 
 	float shootInterval;
 	int bulletIndex = 0;
 	

@@ -9,8 +9,8 @@
 extern ShaderProgram program;
 
 std::map<ShooterType, float> shootIntervals = {
-	{RED, 0.5},
-	{YELLOW, 1.0},
+	{RED, 1.1},
+	{YELLOW, 2},
 	{GREEN, 3}
 };
 
@@ -44,6 +44,24 @@ Shooter::Shooter(float x, float y, ShooterType color, ShooterDirection ShooterDi
 	else if (color == RED && ShooterDirection == RIGHT) {
 		this->sprite = new SheetSprite(textureID, 16, 5, 4, 1.0f, TILESIZE);
 	}
+	else if (color == GREEN && ShooterDirection == LEFT) {
+		this->sprite = new SheetSprite(textureID, 7, 5, 4, 1.0f, TILESIZE);
+	}
+	else if (color == YELLOW && ShooterDirection == LEFT) {
+		this->sprite = new SheetSprite(textureID, 4, 5, 4, 1.0f, TILESIZE);
+	}
+	else if (color == RED && ShooterDirection == LEFT) {
+		this->sprite = new SheetSprite(textureID, 15, 5, 4, 1.0f, TILESIZE);
+	}
+	else if (color == GREEN && ShooterDirection == UP) {
+		this->sprite = new SheetSprite(textureID, 10, 5, 4, 1.0f, TILESIZE);
+	}
+	else if (color == YELLOW && ShooterDirection == UP) {
+		this->sprite = new SheetSprite(textureID, 14, 5, 4, 1.0f, TILESIZE);
+	}
+	else if (color == RED && ShooterDirection == UP) {
+		this->sprite = new SheetSprite(textureID, 17, 5, 4, 1.0f, TILESIZE);
+	}
 
 	width = sprite->aspect * sprite->size;
 	height = sprite->size;
@@ -72,6 +90,15 @@ void Shooter::update(float elapsed) {
 		accum -= shootInterval;
 		if (direction == DOWN) {
 			shootBullet(x_pos, y_pos - height / 2, 0.0f, -BULLET_SPEED);
+		}
+		else if (direction == LEFT) {
+			shootBullet(x_pos - width / 2, y_pos, -BULLET_SPEED, 0.0f);
+		}
+		else if (direction == RIGHT) {
+			shootBullet(x_pos + width / 2, y_pos, BULLET_SPEED, 0.0f);
+		}
+		else if (direction == UP) {
+			shootBullet(x_pos, y_pos + height / 2, 0.0f, BULLET_SPEED);
 		}
 	}
 	else {

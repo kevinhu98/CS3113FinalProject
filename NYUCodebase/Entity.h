@@ -5,7 +5,9 @@
 #include <stdio.h>
 #include "SheetSprite.h"
 
-enum EntityType{ PLAYER, ENEMY, SHOOTER, BULLET, PLATFORM };
+enum EntityType{ PLAYER, CHASER1, CHASER2, SHOOTER, BULLET, PLATFORM };
+//Chaser 1 can jump to other platforms
+//Chaser 2 can only move left and right along a platform
 
 class Entity {
 public:
