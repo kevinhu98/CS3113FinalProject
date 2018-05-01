@@ -1,6 +1,10 @@
 #include "GameState.h"
+<<<<<<< HEAD
 #include "Shooter.h"
 #include "Platform.h"
+=======
+//#include "mode.h"
+>>>>>>> d65d0f1430f6046158bab204272cf6aa68fbc76d
 #include <unordered_set>
 
 #define GRAVITY 9.8f
@@ -180,6 +184,7 @@ void GameState::Render() {
 	if (player) {
 		viewMatrix.Translate(-player->x_pos, -player->y_pos, 0.0f);
 		program.SetViewMatrix(viewMatrix);
+
 	}
 	//render map
 	map->render(program);

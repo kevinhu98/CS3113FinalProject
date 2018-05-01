@@ -1,0 +1,11 @@
+﻿  main.cpp
+c:\users\zafir\cs3113finalproject\nyucodebase\nyucodebase\main.cpp(77): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\zafir\cs3113finalproject\nyucodebase\nyucodebase\main.cpp(78): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\zafir\cs3113finalproject\nyucodebase\nyucodebase\main.cpp(172): warning C4018: '<': signed/unsigned mismatch
+c:\users\zafir\cs3113finalproject\nyucodebase\nyucodebase\main.cpp(211): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\zafir\cs3113finalproject\nyucodebase\nyucodebase\main.cpp(231): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\zafir\cs3113finalproject\nyucodebase\nyucodebase\main.cpp(232): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\zafir\cs3113finalproject\nyucodebase\nyucodebase\main.cpp(361): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\zafir\cs3113finalproject\nyucodebase\nyucodebase\main.cpp(374): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\zafir\cs3113finalproject\nyucodebase\nyucodebase\main.cpp(375): warning C4305: '-=': truncation from 'double' to 'float'
+  NYUCodebase.vcxproj -> C:\Users\zafir\CS3113FinalProject\NYUCodebase\Debug\NYUCodebase.exe

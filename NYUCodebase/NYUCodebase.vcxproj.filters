@@ -39,6 +39,7 @@
     <ClCompile Include="GameUtilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Shooter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -46,6 +47,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Platform.cpp">
+=======
+    <ClCompile Include="MainMenu.cpp">
+>>>>>>> d65d0f1430f6046158bab204272cf6aa68fbc76d
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,6 +75,7 @@
     <ClInclude Include="GameUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="Shooter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -78,6 +83,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Platform.h">
+=======
+    <ClInclude Include="MainMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mode.h">
+>>>>>>> d65d0f1430f6046158bab204272cf6aa68fbc76d
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
