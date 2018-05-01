@@ -29,7 +29,22 @@ Shooter::Shooter(float x, float y, ShooterType color, ShooterDirection ShooterDi
 	if (color == GREEN && ShooterDirection == DOWN) {
 		this->sprite = new SheetSprite(textureID, 6, 5, 4, 1.0f, TILESIZE);
 	}
-	
+	else if (color == YELLOW && ShooterDirection == DOWN) {
+		this->sprite = new SheetSprite(textureID, 18, 5, 4, 1.0f, TILESIZE);
+	}
+	else if (color == RED && ShooterDirection == DOWN) {
+		this->sprite = new SheetSprite(textureID, 13, 5, 4, 1.0f, TILESIZE);
+	}
+	else if (color == GREEN && ShooterDirection == RIGHT) {
+		this->sprite = new SheetSprite(textureID, 8, 5, 4, 1.0f, TILESIZE);
+	}
+	else if (color == YELLOW && ShooterDirection == RIGHT) {
+		this->sprite = new SheetSprite(textureID, 9, 5, 4, 1.0f, TILESIZE);
+	}
+	else if (color == RED && ShooterDirection == RIGHT) {
+		this->sprite = new SheetSprite(textureID, 16, 5, 4, 1.0f, TILESIZE);
+	}
+
 	width = sprite->aspect * sprite->size;
 	height = sprite->size;
 	shootInterval = shootIntervals[color];

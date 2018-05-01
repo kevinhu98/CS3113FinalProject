@@ -10,8 +10,8 @@
 #define MAX_BULLETS 100
 
 GameState::GameState() {}
-//std::unordered_set<int> solidTiles = { 0,1,17,33,34 };
-std::unordered_set<int> solidTiles = {11,12};
+
+std::unordered_set<int> solidTiles = {11,12}; // gray and blue tiles
 
 void GameState::Initialize(GameUtilities* utilities, FlareMap* map) {
 	this->Utilities = utilities;
