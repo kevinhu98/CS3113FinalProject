@@ -18,7 +18,7 @@ public:
 	void ProcessInput();
 	//void Reset();
 	void placeEntity(std::string type, float x, float y);
-	void ApplyPhysics(Entity& entity, float elapsed);
+	void ApplyPhysics(Entity& entity, float elapsed, EntityType type);
 	
 	void checkBulletCollisionMap(Bullet& bullet);
 

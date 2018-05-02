@@ -22,7 +22,6 @@ void GameState::Initialize(GameUtilities* utilities, FlareMap* map) {
 	}
 }
 
-
 void GameState::placeEntity(std::string type, float x, float y) {
 	if (type == "PLAYER") {
 		SheetSprite sprite(map->spriteSheetTexture, 2, 5, 4, 1.0f, map->tileSize);
@@ -36,12 +35,11 @@ void GameState::placeEntity(std::string type, float x, float y) {
 		enemy->x_velocity = 1;
 		entities.push_back(enemy);
 	}
-	/*  //platform currently in development
+	//platform currently in development
 	else if (type == "PLATFORM") {
-		Platform* platform = new Platform(x, y, 0.5, 0, map->spriteSheetTexture);
+		Platform* platform = new Platform(x, y, 0.5, 2.5, map->spriteSheetTexture);
 		entities.push_back(platform);
 	}
-	*/
 	else if (type == "GREEN_DOWN") {
 		Shooter* enemy = new Shooter(x, y, GREEN, DOWN, map->spriteSheetTexture);//should be shooter
 		entities.push_back(enemy);
@@ -95,7 +93,7 @@ void GameState::ProcessInput() {
 	}	
 }
 
-void GameState::ApplyPhysics(Entity& entity, float elapsed){
+void GameState::ApplyPhysics(Entity& entity, float elapsed, EntityType type){
 	entity.update(elapsed); //reset all collision flags
 
 	//friction
@@ -107,7 +105,9 @@ void GameState::ApplyPhysics(Entity& entity, float elapsed){
 	entity.y_velocity += entity.y_acceleration * elapsed;
 
 	//gravity
-	entity.y_velocity -= elapsed * GRAVITY;
+	if (entity.type != PLATFORM) {
+		entity.y_velocity -= elapsed * GRAVITY;
+	}
 
 	//x-velo
 	entity.x_pos += entity.x_velocity * elapsed;
@@ -122,12 +122,12 @@ void GameState::Update(float elapsed) {
 	//updates only occur when player moves
 	if (player->x_velocity < 0.1 && player->x_velocity > -0.1 
 		&& player->y_velocity < 0.1 && player->y_velocity > -0.1) {
-		ApplyPhysics(*player, elapsed);
+		ApplyPhysics(*player, elapsed, player->type);
 		return;
 	}
 
 	for (size_t i = 0; i < entities.size(); ++i) {
-		ApplyPhysics(*entities[i], elapsed); //enemy movement
+		ApplyPhysics(*entities[i], elapsed, entities[i]->type); //enemy movement and player movement
 
 
 
@@ -136,28 +136,38 @@ void GameState::Update(float elapsed) {
 			CheckForJump(*entities[i]);
 		}
 
-			for (size_t j = 0; j < entities.size(); ++j) { // enemies bounce off each other
-				if (entities[i]->collisionEntity(entities[j]) == true) {
-					entities[i]->x_velocity *= -1;
-					entities[j]->x_velocity *= -1;
+		for (size_t j = 0; j < entities.size(); ++j) { // enemies bounce off each other
+			if (entities[i]->collisionEntity(entities[j]) == true) {
+				entities[i]->x_velocity *= -1;
+				entities[j]->x_velocity *= -1;
+			}
+		}
+
+		//death when touching enemy
+		if (player->collisionEntity(entities[i]) && entities[i]->type == ENEMY) {
+			resetPlayer();
+		}
+
+		if (entities[i]->type == SHOOTER) {
+			Shooter* shooter = ((Shooter*)entities[i]);
+			for (size_t i = 0; i < shooter->bullets.size(); ++i) {
+				checkBulletCollisionMap(shooter->bullets[i]);
+				if (shooter->bullets[i].checkCollisionPlayer(player)) {
+					resetPlayer();
+
 				}
 			}
+		}
 
-			//death when touching enemy
-			if (player->collisionEntity(entities[i]) && entities[i]->type == ENEMY) {
-				resetPlayer();
+		if (entities[i]->type == PLATFORM) {
+			Platform* platform = (Platform*)entities[i];
+			if (player->collisionEntity(platform)) {
+				player->collisionInY(entities[i]->y_pos, entities[i]->height);
+				player->collisionInX(entities[i]->x_pos, entities[i]->width);
+				
 			}
+		}
 
-			if (entities[i]->type == SHOOTER) {
-				Shooter* shooter = ((Shooter*)entities[i]);
-				for (size_t i = 0; i < shooter->bullets.size(); ++i) {
-					checkBulletCollisionMap(shooter->bullets[i]);
-					if (shooter->bullets[i].checkCollisionPlayer(player)) {
-						resetPlayer();
-
-					}
-				}
-			}
 		}
 		//bounds check + keeps in bounds
 		if (player->x_pos - player->width / 2 < 0) { //left bound

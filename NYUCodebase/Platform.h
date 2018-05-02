@@ -11,6 +11,7 @@ public:
 	Platform();
 	Platform(float x, float y, float travelDistanceX, float travelDistanceY, int textureID);
 	//~Platform();
+
 	
 	float travelDistanceX;
 	float travelDistanceY;

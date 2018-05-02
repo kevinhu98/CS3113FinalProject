@@ -50,6 +50,11 @@ type=PLAYER
 location=0,22,1,1
 
 [ObjectsLayer]
+# PLATFORM
+type=PLATFORM
+location=4,16,1,1
+
+[ObjectsLayer]
 # CHASER
 type=CHASER
 location=5,22,1,1
