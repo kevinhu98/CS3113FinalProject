@@ -34,7 +34,7 @@ void FlareMap::render(ShaderProgram& shader) {
 			
 			float u = (float)((mapData[y][x] - 1) % spritesX) / (float)spritesX;
 			float v = (float)((mapData[y][x] - 1) / spritesX) / (float)spritesY;
-			float spriteWidth = 1.0f / (float)spritesX;
+			float spriteWidth = (1.0f / (float)spritesX);
 			float spriteHeight = 1.0f / (float)spritesY;
 			vertexData.insert(vertexData.end(), {
 				

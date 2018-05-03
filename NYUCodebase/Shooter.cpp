@@ -12,7 +12,7 @@ std::map<ShooterType, float> shootIntervals = {
 	{RED, 1.1},
 	{YELLOW, 2},
 	{GREEN, 3}
-};
+}; // add private variable
 
 Shooter::Shooter() {}
 
@@ -86,8 +86,8 @@ void Shooter::update(float elapsed) {
 			bullets[i].update(elapsed);
 		}
 	}
-	if (accum > shootInterval) {
-		accum -= shootInterval;
+	if (accum >= shootInterval) {
+		
 		if (direction == DOWN) {
 			shootBullet(x_pos, y_pos - height / 2, 0.0f, -BULLET_SPEED);
 		}
@@ -100,6 +100,7 @@ void Shooter::update(float elapsed) {
 		else if (direction == UP) {
 			shootBullet(x_pos, y_pos + height / 2, 0.0f, BULLET_SPEED);
 		}
+		accum -= shootInterval;
 	}
 	else {
 		accum += elapsed;

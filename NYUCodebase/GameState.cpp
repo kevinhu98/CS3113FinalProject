@@ -1,17 +1,24 @@
 #include "GameState.h"
 #include "Shooter.h"
 #include "Platform.h"
-//#include "mode.h"
+
+#include "mode.h"
 #include <unordered_set>
+#include <SDL_mixer.h>
+
+#define RESOURCE_FOLDER ""
 
 #define GRAVITY 9.8f
 #define ACCELERATION 0.5f
 #define FRICTION 0.99f
 #define MAX_BULLETS 100
 
+extern GameMode mode;
+extern Entity* player;
+
 GameState::GameState() {}
 
-std::unordered_set<int> solidTiles = {11,12}; // gray and blue tiles
+std::unordered_set<int> solidTiles = {11,12,19}; // gray and blue tiles
 
 void GameState::Initialize(GameUtilities* utilities, FlareMap* map) {
 	this->Utilities = utilities;
@@ -20,8 +27,8 @@ void GameState::Initialize(GameUtilities* utilities, FlareMap* map) {
 	for (size_t i = 0; i < map->entities.size(); i++) {
 		placeEntity(map->entities[i].type, map->entities[i].x * map->tileSize + map->tileSize / 2, -map->entities[i].y * map->tileSize + map->tileSize / 2);
 	}
+	
 }
-
 
 void GameState::placeEntity(std::string type, float x, float y) {
 	if (type == "PLAYER") {
@@ -40,69 +47,62 @@ void GameState::placeEntity(std::string type, float x, float y) {
 		SheetSprite sprite(map->spriteSheetTexture, 5, 5, 4, 1.0f, map->tileSize);
 		Entity* enemy = new Entity(x, y, &sprite, CHASER2);
 		//enemy->x_acceleration = 5; //150
-		enemy->x_velocity = 1;
+		enemy->x_velocity = 0.4;
 		entities.push_back(enemy);
 	}
-	/*  //platform currently in development
-	else if (type == "PLATFORM") {
-		Platform* platform = new Platform(x, y, 0.5, 0, map->spriteSheetTexture);
-		entities.push_back(platform);
-	}
-	*/
-
 	//DOWN
 	else if (type == "GREEN_DOWN") {
-		Shooter* enemy = new Shooter(x, y, GREEN, DOWN, map->spriteSheetTexture);//should be shooter
+		Shooter* enemy = new Shooter(x, y, GREEN, DOWN, map->spriteSheetTexture);
 		entities.push_back(enemy);
 	}
 	else if (type == "YELLOW_DOWN") {
-		Shooter* enemy = new Shooter(x, y, YELLOW, DOWN, map->spriteSheetTexture);//should be shooter
+		Shooter* enemy = new Shooter(x, y, YELLOW, DOWN, map->spriteSheetTexture);
 		entities.push_back(enemy);
 	}
 	else if (type == "RED_DOWN") {
-		Shooter* enemy = new Shooter(x, y, RED, DOWN, map->spriteSheetTexture);//should be shooter
+		Shooter* enemy = new Shooter(x, y, RED, DOWN, map->spriteSheetTexture);
 		entities.push_back(enemy);
 	}
 
 	//RIGHT
 	else if (type == "GREEN_RIGHT") {
-		Shooter* enemy = new Shooter(x, y, GREEN, RIGHT, map->spriteSheetTexture);//should be shooter
+		Shooter* enemy = new Shooter(x, y, GREEN, RIGHT, map->spriteSheetTexture);
 		entities.push_back(enemy);
 	}
 	else if (type == "YELLOW_RIGHT") {
-		Shooter* enemy = new Shooter(x, y, YELLOW, RIGHT, map->spriteSheetTexture);//should be shooter
+		Shooter* enemy = new Shooter(x, y, YELLOW, RIGHT, map->spriteSheetTexture);
 		entities.push_back(enemy);
 	}
 	else if (type == "RED_RIGHT") {
-		Shooter* enemy = new Shooter(x, y, RED, RIGHT, map->spriteSheetTexture);//should be shooter
+		Shooter* enemy = new Shooter(x, y, RED, RIGHT, map->spriteSheetTexture);
 		entities.push_back(enemy);
 	}
 
 	//LEFT
 	else if (type == "GREEN_LEFT") {
-		Shooter* enemy = new Shooter(x, y, GREEN, LEFT, map->spriteSheetTexture);//should be shooter
+		Shooter* enemy = new Shooter(x, y, GREEN, LEFT, map->spriteSheetTexture);
 		entities.push_back(enemy);
 	}
 	else if (type == "YELLOW_LEFT") {
-		Shooter* enemy = new Shooter(x, y, YELLOW, LEFT, map->spriteSheetTexture);//should be shooter
+		Shooter* enemy = new Shooter(x, y, YELLOW, LEFT, map->spriteSheetTexture);
 		entities.push_back(enemy);
 	}
 	else if (type == "RED_LEFT") {
-		Shooter* enemy = new Shooter(x, y, RED, LEFT, map->spriteSheetTexture);//should be shooter
+		Shooter* enemy = new Shooter(x, y, RED, LEFT, map->spriteSheetTexture);
 		entities.push_back(enemy);
 	}
 
 	//UP
 	else if (type == "GREEN_UP") {
-		Shooter* enemy = new Shooter(x, y, GREEN, UP, map->spriteSheetTexture);//should be shooter
+		Shooter* enemy = new Shooter(x, y, GREEN, UP, map->spriteSheetTexture);
 		entities.push_back(enemy);
 	}
 	else if (type == "YELLOW_UP") {
-		Shooter* enemy = new Shooter(x, y, YELLOW, UP, map->spriteSheetTexture);//should be shooter
+		Shooter* enemy = new Shooter(x, y, YELLOW, UP, map->spriteSheetTexture);
 		entities.push_back(enemy);
 	}
 	else if (type == "RED_UP") {
-		Shooter* enemy = new Shooter(x, y, RED, UP, map->spriteSheetTexture);//should be shooter
+		Shooter* enemy = new Shooter(x, y, RED, UP, map->spriteSheetTexture);
 		entities.push_back(enemy);
 	}
 	
@@ -113,10 +113,14 @@ void GameState::ProcessInput() {
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
 			*Utilities->done = true;
+			Mix_FreeChunk(sounds["jump"]);
+			Mix_FreeChunk(sounds["walk"]);
+			//Mix_FreeMusic(music);
 		}
 		else if (event.type == SDL_KEYDOWN) {
 			if (event.key.keysym.scancode == SDL_SCANCODE_SPACE && player->collidedBottom) { // jump
 				player->y_velocity = 4.0f;
+				Mix_PlayChannel(-1, sounds["jump"], 0);
 			}
 			//Alternate exit button
 			if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
@@ -134,25 +138,16 @@ void GameState::ProcessInput() {
 	}
 	const Uint8* keys = Utilities->keys;
 
-	if (true) { //player->collidedBottom
+	//if (player->collidedBottom) {
 		if (keys[SDL_SCANCODE_LEFT]) {
-			//player->x_acceleration = -0.7f;
 			player->x_velocity = -1.0;
+			//Mix_PlayChannel(-1, sounds["walk"], 0);
 		}
 		else if (keys[SDL_SCANCODE_RIGHT]) {
-			//player->x_acceleration = 0.7f;
 			player->x_velocity = 1.0;
-
+			//Mix_PlayChannel(-1, sounds["walk"], 0);
 		}
-	}
-	else {
-		if (keys[SDL_SCANCODE_RIGHT]) {
-		//	player->x_velocity
-		}
-		else if (keys[SDL_SCANCODE_LEFT]) {
-			//player->x_acceleration = -1.0f;
-		}
-	}	
+//	}
 }
 
 void GameState::ApplyPhysics(Entity& entity, float elapsed){
@@ -180,16 +175,16 @@ void GameState::ApplyPhysics(Entity& entity, float elapsed){
 
 void GameState::Update(float elapsed) {
 	//updates only occur when player moves
+	//CheckForNextLevel();
 	if (player->x_velocity < 0.1 && player->x_velocity > -0.1 
 		&& player->y_velocity < 0.1 && player->y_velocity > -0.1) {
-			ApplyPhysics(*player, elapsed);
+		ApplyPhysics(*player, elapsed);
+		//Mix_HaltMusic();
 		return;
 	}
-
+	
 	for (size_t i = 0; i < entities.size(); ++i) {
 		ApplyPhysics(*entities[i], elapsed); //enemy movement
-
-
 
 		if (entities[i]->type == CHASER1) { // AI
 			CheckForTurn(*entities[i]);
@@ -198,7 +193,6 @@ void GameState::Update(float elapsed) {
 		else if (entities[i]->type == CHASER2) {
 			CheckForTurn(*entities[i]);
 		}
-		
 
 			for (size_t j = 0; j < entities.size(); ++j) { // enemies bounce off each other
 				if (entities[i]->collisionEntity(entities[j]) == true) {
@@ -237,6 +231,7 @@ void GameState::Update(float elapsed) {
 
 
 void GameState::Render() {
+	glClear(GL_COLOR_BUFFER_BIT);
 	ShaderProgram& program = *Utilities->shader;
 	modelMatrix.Identity();
 	program.SetModelMatrix(modelMatrix);
@@ -246,7 +241,6 @@ void GameState::Render() {
 	if (player) {
 		viewMatrix.Translate(-player->x_pos, -player->y_pos, 0.0f);
 		program.SetViewMatrix(viewMatrix);
-
 	}
 	//render map
 	map->render(program);
@@ -395,8 +389,18 @@ void GameState::CheckForJump(Entity& entity) {
 }
 
 void GameState::resetPlayer() {
-	player->x_pos = map->tileSize / 2;
-	player->y_pos = -3.8;
+	if (mode == STATE_GAME_LEVEL_1) {
+		player->x_pos = map->tileSize / 2;
+		player->y_pos = map->tileSize;
+	}
+	else if (mode == STATE_GAME_LEVEL_2) {
+		player->x_pos = map->tileSize / 2;
+		player->y_pos = map->tileSize;
+	}
+	else if (mode == STATE_GAME_LEVEL_3) {
+		player->x_pos = map->tileSize * 2; // should be slightly more forward
+		player->y_pos = -3;
+	}
 	player->x_velocity = 0;
 	player->y_velocity = 0;
 }
@@ -404,10 +408,10 @@ void GameState::resetPlayer() {
 void GameState::checkBulletCollisionMap(Bullet& bullet) {
 	if (!bullet.alive) return;
 	int botX, botY, rightX, rightY, leftX, leftY, topX, topY;
-	map->worldToTileCoordinates(bullet.x_pos, bullet.y_pos + bullet.height / 1.95, topX, topY);
-	map->worldToTileCoordinates(bullet.x_pos, bullet.y_pos - bullet.height / 1.95, botX, botY);
-	map->worldToTileCoordinates(bullet.x_pos - bullet.width / 1.95, bullet.y_pos, leftX, leftY);
-	map->worldToTileCoordinates(bullet.x_pos + bullet.width / 1.95, bullet.y_pos, rightX, rightY);
+	map->worldToTileCoordinates(bullet.x_pos, bullet.y_pos + bullet.height / 2, topX, topY);
+	map->worldToTileCoordinates(bullet.x_pos, bullet.y_pos - bullet.height / 2, botX, botY);
+	map->worldToTileCoordinates(bullet.x_pos - bullet.width / 2, bullet.y_pos, leftX, leftY);
+	map->worldToTileCoordinates(bullet.x_pos + bullet.width / 2, bullet.y_pos, rightX, rightY);
 	
 	//first checks if bullet is going out of bounds, prevents crash
 
@@ -432,13 +436,56 @@ void GameState::checkBulletCollisionMap(Bullet& bullet) {
 	if ((solidTiles.find(map->mapData[botY][botX] - 1) != solidTiles.end())) {
 		bullet.alive = false;
 	}
-	if ((solidTiles.find(map->mapData[topY][topX] - 1) != solidTiles.end())) {
+	/*
+	else if ((solidTiles.find(map->mapData[topY][topX] - 1) != solidTiles.end())) {
 		bullet.alive = false;
 	}
-	if ((solidTiles.find(map->mapData[leftY][leftX] - 1) != solidTiles.end())) {
+	else if ((solidTiles.find(map->mapData[leftY][leftX] - 1) != solidTiles.end())) {
 		bullet.alive = false;
 	}
-	if ((solidTiles.find(map->mapData[rightY][rightX] - 1) != solidTiles.end())) {
+	else if ((solidTiles.find(map->mapData[rightY][rightX] - 1) != solidTiles.end())) {
 		bullet.alive = false;
 	}
+	*/
+}
+
+void GameState::LoadLevel() {
+	if (mode == STATE_MAIN_MENU) {
+		mode = STATE_GAME_LEVEL_1;
+	}
+	if (mode == STATE_GAME_LEVEL_1) {
+		map = new FlareMap();
+		map->Load(RESOURCE_FOLDER"finalproject1.txt");
+	}
+	else if (mode == STATE_GAME_LEVEL_2) {
+		delete map;
+		map = new FlareMap();
+		map->Load(RESOURCE_FOLDER"finalproject2.txt");
+	}
+	if (mode == STATE_GAME_LEVEL_3) {
+		delete map;
+		map = new FlareMap();
+		map->Load(RESOURCE_FOLDER"finalproject3.txt");
+	}
+}
+
+void GameState::CheckForNextLevel() {
+	if (mode == STATE_MAIN_MENU) {
+		return;
+	}
+	LoadLevel();
+	if (map->getTileCoordinateXPos(player->x_pos) == (map->mapWidth - map->tileSize / 2)) { // player reaches end, (blue tile)
+		if (mode == STATE_GAME_LEVEL_1) {
+			mode = STATE_GAME_LEVEL_2;
+		}	
+		else if (mode == STATE_GAME_LEVEL_2) {
+			mode = STATE_GAME_LEVEL_3;
+		}
+		else if (mode == STATE_GAME_LEVEL_3) {
+			mode = STATE_GAME_OVER;
+		}
+	}
+	LoadLevel();
+	resetPlayer();
+	
 }

@@ -24,7 +24,7 @@ void MainMenu::ProcessInput() {
 			}
 
 			if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
-				mode = STATE_GAME_LEVEL;
+				mode = STATE_GAME_LEVEL_1;
 			}
 		}
 	}

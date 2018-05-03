@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #endif
 
+#include <SDL_mixer.h>
 #include "SheetSprite.h"
 #include "Entity.h"
 #include "GameState.h"
@@ -18,7 +19,6 @@
 
 #define FIXED_TIMESTEP 0.0166666f
 #define MAX_TIMESTEPS 6
-
 
 SDL_Window* displayWindow;
 
@@ -38,8 +38,18 @@ bool done = false;
 FlareMap map;
 GameUtilities Utilities;
 
-int main(int argc, char *argv[])
-{
+std::map<std::string, Mix_Chunk*> sounds;
+
+void LoadSounds() {
+	Mix_Music* music = Mix_LoadMUS("finalProjectMusic2.mp3");
+	sounds["jump"] = Mix_LoadWAV("playerJump.wav");
+	//sounds["walk"] = Mix_LoadWAV("playerWalk.wav");
+	Mix_VolumeChunk(sounds["jump"], 20);
+	Mix_PlayMusic(music, -1);
+}
+
+int main(int argc, char *argv[]){
+
 	float width = 1280;
 	float length = 720;
 	SDL_Init(SDL_INIT_VIDEO);
@@ -63,8 +73,10 @@ int main(int argc, char *argv[])
 	spriteSheetTexture = LoadTexture(RESOURCE_FOLDER"QB.png", GL_NEAREST);
 	fontTexture = LoadTexture(RESOURCE_FOLDER"font.png", GL_NEAREST);
 
-	map.setSpriteSheet(spriteSheetTexture, 5, 4);
+
 	map.Load(RESOURCE_FOLDER"finalproject1.txt");
+
+	map.setSpriteSheet(spriteSheetTexture, 5, 4);
 	
 	Utilities.event = &event;
 	Utilities.keys = keys;
@@ -77,7 +89,10 @@ int main(int argc, char *argv[])
 	menu.Initialize(&Utilities, fontTexture);
 
 	mode = STATE_MAIN_MENU;
-	
+
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
+	LoadSounds();
+
 	float lastFrameTicks = 0.0f;
 	float accumulator = 0.0f;
 
@@ -90,7 +105,13 @@ int main(int argc, char *argv[])
 			case STATE_MAIN_MENU:
 				menu.ProcessInput();
 				break;
-			case STATE_GAME_LEVEL:
+			case STATE_GAME_LEVEL_1:
+				gameState.ProcessInput();
+				break;
+			case STATE_GAME_LEVEL_2:
+		//		gameState.ProcessInput();
+				break;
+			case STATE_GAME_LEVEL_3:
 				gameState.ProcessInput();
 				break;
 			case STATE_GAME_OVER:
@@ -108,11 +129,15 @@ int main(int argc, char *argv[])
 
 			switch (mode) {
 			case STATE_MAIN_MENU:
-				//gameState.Update(FIXED_TIMESTEP);
 				menu.Update(FIXED_TIMESTEP);
 				break;
-			case STATE_GAME_LEVEL:
+			case STATE_GAME_LEVEL_1:
 				gameState.Update(FIXED_TIMESTEP);
+			case STATE_GAME_LEVEL_2:
+			//	gameState.Update(FIXED_TIMESTEP);
+			case STATE_GAME_LEVEL_3:
+			//	gameState.Update(FIXED_TIMESTEP);
+
 				break;
 			case STATE_GAME_OVER:
 				break; 
@@ -129,7 +154,13 @@ int main(int argc, char *argv[])
 			gameState.Render();
 			menu.Render();
 			break;
-		case STATE_GAME_LEVEL:
+		case STATE_GAME_LEVEL_1:
+			gameState.Render();
+			break;
+		case STATE_GAME_LEVEL_2:
+			//gameState.Render();
+			break;
+		case STATE_GAME_LEVEL_3:
 			gameState.Render();
 			break;
 		case STATE_GAME_OVER:

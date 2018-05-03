@@ -30,11 +30,15 @@ public:
 
 	void CheckForTurn(Entity& entity);
 	void CheckForJump(Entity& entity);
+	void CheckForNextLevel();
+	void LoadLevel();
 
 	void resetPlayer();
 	Entity* player;
 	std::vector<Entity*> entities;
 	FlareMap* map;
+
+	int currentLevel = 1;
 
 	Matrix modelMatrix;
 	Matrix viewMatrix;

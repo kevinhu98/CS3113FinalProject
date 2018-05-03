@@ -10,6 +10,10 @@
 #include <vector>
 #include <string>
 #include <stdio.h>
+#include <SDL_mixer.h>
+#include <map>
+
+extern std::map<std::string, Mix_Chunk*> sounds;
 
 class Matrix;
 class ShaderProgram;

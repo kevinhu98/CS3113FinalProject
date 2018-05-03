@@ -1,116 +1,47 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="FlareMap.cpp" />
+    <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="GameUtilities.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="Platform.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="SheetSprite.cpp" />
+    <ClCompile Include="Shooter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Matrix.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderProgram.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SheetSprite.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FlareMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameUtilities.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-<<<<<<< HEAD
-    <ClCompile Include="Shooter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Bullet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform.cpp">
-=======
-    <ClCompile Include="MainMenu.cpp">
->>>>>>> d65d0f1430f6046158bab204272cf6aa68fbc76d
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="FlareMap.h" />
+    <ClInclude Include="GameState.h" />
+    <ClInclude Include="GameUtilities.h" />
+    <ClInclude Include="mode.h" />
+    <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="Platform.h" />
+    <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="SheetSprite.h" />
+    <ClInclude Include="Shooter.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Matrix.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderProgram.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SheetSprite.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FlareMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameUtilities.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="Shooter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Bullet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform.h">
-=======
-    <ClInclude Include="MainMenu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mode.h">
->>>>>>> d65d0f1430f6046158bab204272cf6aa68fbc76d
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <Image Include="..\..\..\..\Desktop\QB.png" />
+    <Image Include="..\..\..\CS3113\assets\sprite_sheets\arne_sprites.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl" />
-    <None Include="vertex.glsl" />
     <None Include="fragment_textured.glsl" />
+    <None Include="vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\CS3113\assets\sprite_sheets\arne_sprites.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\..\..\Desktop\QB.png">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <Text Include="AITEST.txt" />
+    <Text Include="hw4.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="AITEST.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="hw4.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
+    <Media Include="playerJump.wav" />
   </ItemGroup>
 </Project>
