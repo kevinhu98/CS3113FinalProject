@@ -162,7 +162,9 @@ void GameState::ApplyPhysics(Entity& entity, float elapsed){
 	entity.y_velocity += entity.y_acceleration * elapsed;
 
 	//gravity
+	
 	entity.y_velocity -= elapsed * GRAVITY;
+	
 
 	//x-velo
 	entity.x_pos += entity.x_velocity * elapsed;
@@ -176,15 +178,16 @@ void GameState::ApplyPhysics(Entity& entity, float elapsed){
 void GameState::Update(float elapsed) {
 	//updates only occur when player moves
 	//CheckForNextLevel();
-	if (player->x_velocity < 0.1 && player->x_velocity > -0.1 
+	if (player->x_velocity < 0.1 && player->x_velocity > -0.1
 		&& player->y_velocity < 0.1 && player->y_velocity > -0.1) {
+
 		ApplyPhysics(*player, elapsed);
 		//Mix_HaltMusic();
-		return;
+
 	}
-	
+
 	for (size_t i = 0; i < entities.size(); ++i) {
-		ApplyPhysics(*entities[i], elapsed); //enemy movement
+		ApplyPhysics(*entities[i], elapsed); //enemy movement and player movement
 
 		if (entities[i]->type == CHASER1) { // AI
 			CheckForTurn(*entities[i]);
@@ -194,30 +197,30 @@ void GameState::Update(float elapsed) {
 			CheckForTurn(*entities[i]);
 		}
 
-			for (size_t j = 0; j < entities.size(); ++j) { // enemies bounce off each other
-				if (entities[i]->collisionEntity(entities[j]) == true) {
-					entities[i]->x_velocity *= -1;
-					entities[j]->x_velocity *= -1;
-				}
+		for (size_t j = 0; j < entities.size(); ++j) { // enemies bounce off each other
+			if (entities[i]->collisionEntity(entities[j]) == true) {
+				entities[i]->x_velocity *= -1;
+				entities[j]->x_velocity *= -1;
 			}
+		}
 
-			//death when touching enemy
-			if (player->collisionEntity(entities[i]) && (entities[i]->type == CHASER1 || entities[i]->type == CHASER2)) {
-				resetPlayer();
-			}
 
-			//stops drawing bullets if they touch map
-			if (entities[i]->type == SHOOTER) {
-				Shooter* shooter = ((Shooter*)entities[i]);
-				for (size_t i = 0; i < shooter->bullets.size(); ++i) {
-					checkBulletCollisionMap(shooter->bullets[i]);
-					if (shooter->bullets[i].checkCollisionPlayer(player)) {
-						resetPlayer();
+		//death when touching enemy
+		if (player->collisionEntity(entities[i]) && (entities[i]->type == CHASER1 || entities[i]->type == CHASER2)) {
+			resetPlayer();
+		}
 
-					}
+		//stops drawing bullets if they touch map
+		if (entities[i]->type == SHOOTER) {
+			Shooter* shooter = ((Shooter*)entities[i]);
+			for (size_t i = 0; i < shooter->bullets.size(); ++i) {
+				checkBulletCollisionMap(shooter->bullets[i]);
+				if (shooter->bullets[i].checkCollisionPlayer(player)) {
+					resetPlayer();
 				}
 			}
 		}
+	}
 		//bounds check + keeps in bounds
 		if (player->x_pos - player->width / 2 < 0) { //left bound
 			player->x_velocity = 0;
@@ -226,11 +229,12 @@ void GameState::Update(float elapsed) {
 		else if (player->x_pos + player->width / 2 > (map->tileSize*map->mapWidth)) { //right bound
 			player->x_velocity = 0;
 			player->x_pos = map->tileSize*map->mapWidth - map->tileSize / 2;
-		}
+		
+
 	}
 
-
-void GameState::Render() {
+}
+void GameState::Render(){
 	glClear(GL_COLOR_BUFFER_BIT);
 	ShaderProgram& program = *Utilities->shader;
 	modelMatrix.Identity();
