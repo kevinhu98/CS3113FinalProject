@@ -20,14 +20,13 @@ GameState::GameState() {}
 
 std::unordered_set<int> solidTiles = {11,12,19}; // gray and blue tiles
 
-void GameState::Initialize(GameUtilities* utilities, FlareMap* map) {
+void GameState::Initialize(GameUtilities* utilities) {
 	this->Utilities = utilities;
-	this->map = map;
+	LoadLevel();
 	//sheetSprites.emplace_back(map->spriteSheetTexture, , map->spritesX, map->spritesY, 1.0f, map->tileSize);
 	for (size_t i = 0; i < map->entities.size(); i++) {
 		placeEntity(map->entities[i].type, map->entities[i].x * map->tileSize + map->tileSize / 2, -map->entities[i].y * map->tileSize + map->tileSize / 2);
 	}
-	
 }
 
 void GameState::placeEntity(std::string type, float x, float y) {
@@ -180,10 +179,8 @@ void GameState::Update(float elapsed) {
 	//CheckForNextLevel();
 	if (player->x_velocity < 0.1 && player->x_velocity > -0.1
 		&& player->y_velocity < 0.1 && player->y_velocity > -0.1) {
-
 		ApplyPhysics(*player, elapsed);
-		//Mix_HaltMusic();
-
+		return;
 	}
 
 	for (size_t i = 0; i < entities.size(); ++i) {
@@ -207,7 +204,9 @@ void GameState::Update(float elapsed) {
 
 		//death when touching enemy
 		if (player->collisionEntity(entities[i]) && (entities[i]->type == CHASER1 || entities[i]->type == CHASER2)) {
+			Mix_PlayChannel(-1, sounds["death"], 0);
 			resetPlayer();
+
 		}
 
 		//stops drawing bullets if they touch map
@@ -216,6 +215,7 @@ void GameState::Update(float elapsed) {
 			for (size_t i = 0; i < shooter->bullets.size(); ++i) {
 				checkBulletCollisionMap(shooter->bullets[i]);
 				if (shooter->bullets[i].checkCollisionPlayer(player)) {
+					Mix_PlayChannel(-1, sounds["death"], 0);
 					resetPlayer();
 				}
 			}
@@ -455,9 +455,6 @@ void GameState::checkBulletCollisionMap(Bullet& bullet) {
 
 void GameState::LoadLevel() {
 	if (mode == STATE_MAIN_MENU) {
-		mode = STATE_GAME_LEVEL_1;
-	}
-	if (mode == STATE_GAME_LEVEL_1) {
 		map = new FlareMap();
 		map->Load(RESOURCE_FOLDER"finalproject1.txt");
 	}
@@ -466,19 +463,16 @@ void GameState::LoadLevel() {
 		map = new FlareMap();
 		map->Load(RESOURCE_FOLDER"finalproject2.txt");
 	}
-	if (mode == STATE_GAME_LEVEL_3) {
+	else if (mode == STATE_GAME_LEVEL_3) {
 		delete map;
 		map = new FlareMap();
 		map->Load(RESOURCE_FOLDER"finalproject3.txt");
 	}
+	map->setSpriteSheet(Utilities->spriteSheets[0], 5, 4);
 }
 
 void GameState::CheckForNextLevel() {
-	if (mode == STATE_MAIN_MENU) {
-		return;
-	}
-	LoadLevel();
-	if (map->getTileCoordinateXPos(player->x_pos) == (map->mapWidth - map->tileSize / 2)) { // player reaches end, (blue tile)
+	if (map->getTileCoordinateXPos(player->x_pos) == (map->mapWidth - map->tileSize)) { // player reaches end, (blue tile)
 		if (mode == STATE_GAME_LEVEL_1) {
 			mode = STATE_GAME_LEVEL_2;
 		}	

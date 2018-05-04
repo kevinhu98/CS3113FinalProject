@@ -12,7 +12,7 @@
 class GameState {
 public:
 	GameState();
-	void Initialize(GameUtilities* utilities, FlareMap* map);
+	void Initialize(GameUtilities* utilities);
 	void Render();
 	void Update(float elapsed);
 	void ProcessInput();
