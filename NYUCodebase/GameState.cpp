@@ -23,10 +23,6 @@ std::unordered_set<int> solidTiles = {11,12,19}; // gray and blue tiles
 void GameState::Initialize(GameUtilities* utilities) {
 	this->Utilities = utilities;
 	LoadLevel();
-	//sheetSprites.emplace_back(map->spriteSheetTexture, , map->spritesX, map->spritesY, 1.0f, map->tileSize);
-	for (size_t i = 0; i < map->entities.size(); i++) {
-		placeEntity(map->entities[i].type, map->entities[i].x * map->tileSize + map->tileSize / 2, -map->entities[i].y * map->tileSize + map->tileSize / 2);
-	}
 }
 
 void GameState::placeEntity(std::string type, float x, float y) {
@@ -117,7 +113,8 @@ void GameState::ProcessInput() {
 			//Mix_FreeMusic(music);
 		}
 		else if (event.type == SDL_KEYDOWN) {
-			if (event.key.keysym.scancode == SDL_SCANCODE_SPACE && player->collidedBottom) { // jump
+			if ((event.key.keysym.scancode == SDL_SCANCODE_SPACE || event.key.keysym.scancode == SDL_SCANCODE_UP)
+				&& player->collidedBottom) { // jump
 				player->y_velocity = 4.0f;
 				Mix_PlayChannel(-1, sounds["jump"], 0);
 			}
@@ -176,7 +173,6 @@ void GameState::ApplyPhysics(Entity& entity, float elapsed){
 
 void GameState::Update(float elapsed) {
 	//updates only occur when player moves
-	//CheckForNextLevel();
 	if (player->x_velocity < 0.1 && player->x_velocity > -0.1
 		&& player->y_velocity < 0.1 && player->y_velocity > -0.1) {
 		ApplyPhysics(*player, elapsed);
@@ -229,9 +225,9 @@ void GameState::Update(float elapsed) {
 		else if (player->x_pos + player->width / 2 > (map->tileSize*map->mapWidth)) { //right bound
 			player->x_velocity = 0;
 			player->x_pos = map->tileSize*map->mapWidth - map->tileSize / 2;
-		
+		}
 
-	}
+		CheckForNextLevel();
 
 }
 void GameState::Render(){
@@ -393,17 +389,17 @@ void GameState::CheckForJump(Entity& entity) {
 }
 
 void GameState::resetPlayer() {
-	if (mode == STATE_GAME_LEVEL_1) {
+	if (mode == STATE_GAME_LEVEL_1 || STATE_MAIN_MENU) {
 		player->x_pos = map->tileSize / 2;
-		player->y_pos = map->tileSize;
+		player->y_pos = -6;
 	}
 	else if (mode == STATE_GAME_LEVEL_2) {
 		player->x_pos = map->tileSize / 2;
-		player->y_pos = map->tileSize;
+		player->y_pos = -6;
 	}
 	else if (mode == STATE_GAME_LEVEL_3) {
 		player->x_pos = map->tileSize * 2; // should be slightly more forward
-		player->y_pos = -3;
+		player->y_pos = -10;
 	}
 	player->x_velocity = 0;
 	player->y_velocity = 0;
@@ -454,6 +450,9 @@ void GameState::checkBulletCollisionMap(Bullet& bullet) {
 }
 
 void GameState::LoadLevel() {
+	if (mode == STATE_GAME_LEVEL_1) {
+		return;
+	}
 	if (mode == STATE_MAIN_MENU) {
 		map = new FlareMap();
 		map->Load(RESOURCE_FOLDER"finalproject1.txt");
@@ -469,21 +468,38 @@ void GameState::LoadLevel() {
 		map->Load(RESOURCE_FOLDER"finalproject3.txt");
 	}
 	map->setSpriteSheet(Utilities->spriteSheets[0], 5, 4);
+
+	// Clear out old entities
+	for (size_t i = 0; i < entities.size(); i++) {
+		delete entities[i];
+	}
+	entities.clear();
+
+	// Load entities
+	for (size_t i = 0; i < map->entities.size(); i++) {
+		placeEntity(map->entities[i].type, map->entities[i].x * map->tileSize + map->tileSize / 2, -map->entities[i].y * map->tileSize + map->tileSize / 2);
+	}
 }
 
 void GameState::CheckForNextLevel() {
-	if (map->getTileCoordinateXPos(player->x_pos) == (map->mapWidth - map->tileSize)) { // player reaches end, (blue tile)
+	//final version will check if player position is above a blue tile.
+	int botX, botY;
+	//map->worldToTileCoordinates(player->x_pos, player->y_pos - player->height / 2 - map->tileSize / 2, botX, botY);
+	int x = map->getTileCoordinateXPos(player->x_pos);
+	if (x == map->mapWidth - 1) { // player reaches end of map
 		if (mode == STATE_GAME_LEVEL_1) {
 			mode = STATE_GAME_LEVEL_2;
-		}	
+			LoadLevel();
+		}
 		else if (mode == STATE_GAME_LEVEL_2) {
 			mode = STATE_GAME_LEVEL_3;
+			LoadLevel();
 		}
 		else if (mode == STATE_GAME_LEVEL_3) {
 			mode = STATE_GAME_OVER;
+			LoadLevel();
 		}
+
+		resetPlayer();
 	}
-	LoadLevel();
-	resetPlayer();
-	
 }

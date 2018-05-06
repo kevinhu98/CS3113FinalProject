@@ -60,6 +60,7 @@ data=
 type=PLAYER
 location=0,32,1,1
 
+[ObjectsLayer]
 # CHASER1
 type=CHASER1
 location=5,32,1,1

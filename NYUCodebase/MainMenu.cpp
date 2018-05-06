@@ -34,7 +34,7 @@ void MainMenu::Update(float elapsed) {
 	//Animation
 	animationTime += elapsed;
 	animationValue = mapValue(animationTime, 0.0, 2.0, 0.0, 1.0);
-	y_pos = easeOutElastic(4.0, 1.75, animationValue);
+	y_pos = easeOutElastic(300.0, 1.75, animationValue);
 
 	rotation = easeOutElastic(rotation, 0.0f, elapsed * 0.4);
 

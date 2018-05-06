@@ -66,6 +66,7 @@ Shooter::Shooter(float x, float y, ShooterType color, ShooterDirection ShooterDi
 	width = sprite->aspect * sprite->size;
 	height = sprite->size;
 	shootInterval = shootIntervals[color];
+	accum = shootInterval;
 }
 
 void Shooter::shootBullet(float x_pos, float y_pos, float x_velocity, float y_velocity) {
