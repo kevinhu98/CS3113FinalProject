@@ -47,7 +47,7 @@ void LoadSounds() {
 	sounds["jump"] = Mix_LoadWAV("playerJump.wav");
 	sounds["death"] = Mix_LoadWAV("playerDeath.wav");
 	//sounds["walk"] = Mix_LoadWAV("playerWalk.wav");
-	Mix_VolumeChunk(sounds["jump"], 15);
+	Mix_VolumeChunk(sounds["jump"], 85);
 	Mix_PlayMusic(music, -1);
 }
 
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]){
 
 	spriteSheetTexture = LoadTexture(RESOURCE_FOLDER"QB.png", GL_NEAREST);
 	fontTexture = LoadTexture(RESOURCE_FOLDER"font.png", GL_NEAREST);
-	
+
 	mode = STATE_MAIN_MENU; // to load level 1, set gamestate to main menu
 	Utilities.event = &event;
 	Utilities.keys = keys;
@@ -102,7 +102,6 @@ int main(int argc, char *argv[]){
 		switch (mode) {
 			case STATE_MAIN_MENU:
 				menu.ProcessInput();
-				//gameOver.ProcessInput();
 				break;
 			case STATE_GAME_LEVEL_1:
 			case STATE_GAME_LEVEL_2:
@@ -125,7 +124,6 @@ int main(int argc, char *argv[]){
 			switch (mode) {
 			case STATE_MAIN_MENU:
 				menu.Update(FIXED_TIMESTEP);
-				//gameOver.Update(FIXED_TIMESTEP);
 				break;
 			case STATE_GAME_LEVEL_1:
 			case STATE_GAME_LEVEL_2:
@@ -147,7 +145,6 @@ int main(int argc, char *argv[]){
 		case STATE_MAIN_MENU:
 			gameState.Render();
 			menu.Render();
-			//gameOver.Render();
 			break;
 		case STATE_GAME_LEVEL_1:
 		case STATE_GAME_LEVEL_2:
