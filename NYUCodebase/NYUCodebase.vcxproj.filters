@@ -13,6 +13,7 @@
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="SheetSprite.cpp" />
     <ClCompile Include="Shooter.cpp" />
+    <ClCompile Include="GameOverMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bullet.h" />
@@ -27,6 +28,7 @@
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SheetSprite.h" />
     <ClInclude Include="Shooter.h" />
+    <ClInclude Include="GameOverMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Desktop\QB.png" />

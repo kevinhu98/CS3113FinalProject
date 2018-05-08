@@ -10,6 +10,7 @@
 #include "GameUtilities.h"
 #include "MainMenu.h"
 #include "mode.h"
+#include "GameOverMenu.h"
 
 #ifdef _WINDOWS
 #define RESOURCE_FOLDER ""
@@ -34,7 +35,7 @@ const Uint8 *keys = SDL_GetKeyboardState(NULL);
 SDL_Event event;
 GameState gameState;
 MainMenu menu;
-MainMenu gameOver;
+GameOverMenu gameOver;
 bool done = false;
 FlareMap map;
 GameUtilities Utilities;
@@ -102,6 +103,7 @@ int main(int argc, char *argv[]){
 		switch (mode) {
 			case STATE_MAIN_MENU:
 				menu.ProcessInput();
+				//gameOver.ProcessInput();
 				break;
 			case STATE_GAME_LEVEL_1:
 			case STATE_GAME_LEVEL_2:
@@ -124,6 +126,7 @@ int main(int argc, char *argv[]){
 			switch (mode) {
 			case STATE_MAIN_MENU:
 				menu.Update(FIXED_TIMESTEP);
+				//gameOver.Update(FIXED_TIMESTEP);
 				break;
 			case STATE_GAME_LEVEL_1:
 			case STATE_GAME_LEVEL_2:
@@ -145,6 +148,7 @@ int main(int argc, char *argv[]){
 		case STATE_MAIN_MENU:
 			gameState.Render();
 			menu.Render();
+			//gameOver.Render();
 			break;
 		case STATE_GAME_LEVEL_1:
 		case STATE_GAME_LEVEL_2:
