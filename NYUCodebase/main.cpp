@@ -74,8 +74,10 @@ int main(int argc, char *argv[]){
 	spriteSheetTexture = LoadTexture(RESOURCE_FOLDER"QB.png", GL_NEAREST);
 	fontTexture = LoadTexture(RESOURCE_FOLDER"font.png", GL_NEAREST);
 	
-	mode = STATE_MAIN_MENU; // to load level 1, set gamestate to main menu
 
+
+	mode = STATE_MAIN_MENU; // to load level 1, set gamestate to main menu
+	//mode = STATE_GAME_LEVEL_2;
 	Utilities.event = &event;
 	Utilities.keys = keys;
 	

@@ -414,6 +414,20 @@ void GameState::checkBulletCollisionMap(Bullet& bullet) {
 	map->worldToTileCoordinates(bullet.x_pos + bullet.width / 2, bullet.y_pos, rightX, rightY);
 	
 	//first checks if bullet is going out of bounds, prevents crash
+	if (botX > 0 && botY > 0 && (solidTiles.find(map->mapData[botY][botX] - 1) != solidTiles.end()) && botY < map->mapHeight && botX < map->mapWidth) {
+		bullet.alive = false;
+	}
+	/*
+	if (leftX > 0 && leftY > 0 && (solidTiles.find(map->mapData[leftY][leftX] - 1) != solidTiles.end()) && leftY < map->mapHeight && leftX < map->mapWidth) {
+		bullet.alive = false;
+	}
+	if (rightX > 0 && rightY > 0 && (solidTiles.find(map->mapData[rightY][rightX] - 1) != solidTiles.end()) && rightY < map->mapHeight && rightX < map->mapWidth) {
+		bullet.alive = false;
+	}
+	if (topX > 0 && topY > 0 && (solidTiles.find(map->mapData[topY][topX] - 1) != solidTiles.end()) && topY < map->mapHeight && topX < map->mapWidth) {
+		bullet.alive = false;
+	}
+	*/
 
 	if (botX < 0 || botY < 0 || map->mapData[botY][botX] == 0 ||
 		solidTiles.find(map->mapData[botY][botX] - 1) == solidTiles.end()) {
@@ -432,11 +446,10 @@ void GameState::checkBulletCollisionMap(Bullet& bullet) {
 		return;
 	}
 	//checks all corners of bullet for map collision
-	
+
 	if ((solidTiles.find(map->mapData[botY][botX] - 1) != solidTiles.end())) {
 		bullet.alive = false;
 	}
-	/*
 	else if ((solidTiles.find(map->mapData[topY][topX] - 1) != solidTiles.end())) {
 		bullet.alive = false;
 	}
@@ -446,7 +459,7 @@ void GameState::checkBulletCollisionMap(Bullet& bullet) {
 	else if ((solidTiles.find(map->mapData[rightY][rightX] - 1) != solidTiles.end())) {
 		bullet.alive = false;
 	}
-	*/
+	
 }
 
 void GameState::LoadLevel() {
