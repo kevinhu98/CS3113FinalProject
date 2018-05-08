@@ -122,6 +122,9 @@ void GameState::ProcessInput() {
 			if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
 				*Utilities->done = true;
 			}
+			if (event.key.keysym.scancode == SDL_SCANCODE_F) {
+				player->x_velocity += 8;
+			}
 		}
 		else if (event.type == SDL_KEYUP) {
 			if (event.key.keysym.scancode == SDL_SCANCODE_UP) {
@@ -407,58 +410,55 @@ void GameState::resetPlayer() {
 
 void GameState::checkBulletCollisionMap(Bullet& bullet) {
 	if (!bullet.alive) return;
-	int botX, botY, rightX, rightY, leftX, leftY, topX, topY;
-	map->worldToTileCoordinates(bullet.x_pos, bullet.y_pos + bullet.height / 2, topX, topY);
-	map->worldToTileCoordinates(bullet.x_pos, bullet.y_pos - bullet.height / 2, botX, botY);
-	map->worldToTileCoordinates(bullet.x_pos - bullet.width / 2, bullet.y_pos, leftX, leftY);
-	map->worldToTileCoordinates(bullet.x_pos + bullet.width / 2, bullet.y_pos, rightX, rightY);
-	
-	//first checks if bullet is going out of bounds, prevents crash
-	if (botX > 0 && botY > 0 && (solidTiles.find(map->mapData[botY][botX] - 1) != solidTiles.end()) && botY < map->mapHeight && botX < map->mapWidth) {
-		bullet.alive = false;
+	// Right
+	if (bullet.x_velocity > 0) {
+		int rightX, rightY;
+		map->worldToTileCoordinates(bullet.x_pos + bullet.width / 2, bullet.y_pos, rightX, rightY);
+		if (rightX < 0 || rightY < 0 || map->mapData[rightY][rightX] == 0 ||
+			solidTiles.find(map->mapData[rightY][rightX] - 1) == solidTiles.end()) {
+			return;
+		}
+		if ((solidTiles.find(map->mapData[rightY][rightX] - 1) != solidTiles.end())) {
+			bullet.alive = false;
+		}
 	}
-	/*
-	if (leftX > 0 && leftY > 0 && (solidTiles.find(map->mapData[leftY][leftX] - 1) != solidTiles.end()) && leftY < map->mapHeight && leftX < map->mapWidth) {
-		bullet.alive = false;
+	// Left
+	else if (bullet.x_velocity < 0) {
+		int leftX, leftY;
+		map->worldToTileCoordinates(bullet.x_pos - bullet.width / 2, bullet.y_pos, leftX, leftY);
+		if (leftX < 0 || leftY < 0 || map->mapData[leftY][leftX] == 0 ||
+			solidTiles.find(map->mapData[leftY][leftX] - 1) == solidTiles.end()) {
+			return;
+		}
+		if ((solidTiles.find(map->mapData[leftY][leftX] - 1) != solidTiles.end())) {
+			bullet.alive = false;
+		}
 	}
-	if (rightX > 0 && rightY > 0 && (solidTiles.find(map->mapData[rightY][rightX] - 1) != solidTiles.end()) && rightY < map->mapHeight && rightX < map->mapWidth) {
-		bullet.alive = false;
+	// Top
+	else if (bullet.y_velocity > 0) {
+		int topX, topY;
+		map->worldToTileCoordinates(bullet.x_pos, bullet.y_pos + bullet.height / 2, topX, topY);
+		if (topX < 0 || topY < 0 || map->mapData[topY][topX] == 0 ||
+			solidTiles.find(map->mapData[topY][topX] - 1) == solidTiles.end()) {
+			return;
+		}
+		if ((solidTiles.find(map->mapData[topY][topX] - 1) != solidTiles.end())) {
+			bullet.alive = false;
+		}
 	}
-	if (topX > 0 && topY > 0 && (solidTiles.find(map->mapData[topY][topX] - 1) != solidTiles.end()) && topY < map->mapHeight && topX < map->mapWidth) {
-		bullet.alive = false;
+	// Bottom
+	else if (bullet.y_velocity < 0) {
+		int botX, botY;
+		map->worldToTileCoordinates(bullet.x_pos, bullet.y_pos - bullet.height / 2, botX, botY);
+		if (botX < 0 || botY < 0 || map->mapData[botY][botX] == 0 ||
+			solidTiles.find(map->mapData[botY][botX] - 1) == solidTiles.end()) {
+			return;
+		}
+		if ((solidTiles.find(map->mapData[botY][botX] - 1) != solidTiles.end())) {
+			bullet.alive = false;
+		}
 	}
-	*/
 
-	if (botX < 0 || botY < 0 || map->mapData[botY][botX] == 0 ||
-		solidTiles.find(map->mapData[botY][botX] - 1) == solidTiles.end()) {
-		return;
-	}
-	else if (rightX < 0 || rightY < 0 || map->mapData[rightY][rightX] == 0 ||
-		solidTiles.find(map->mapData[rightY][rightX] - 1) == solidTiles.end()) {
-		return;
-	}
-	else if (leftX < 0 || leftY < 0 || map->mapData[leftY][leftX] == 0 ||
-		solidTiles.find(map->mapData[leftY][leftX] - 1) == solidTiles.end()) {
-		return;
-	}
-	else if (topX < 0 || topY < 0 || map->mapData[topY][topX] == 0 ||
-		solidTiles.find(map->mapData[topY][topX] - 1) == solidTiles.end()) {
-		return;
-	}
-	//checks all corners of bullet for map collision
-
-	if ((solidTiles.find(map->mapData[botY][botX] - 1) != solidTiles.end())) {
-		bullet.alive = false;
-	}
-	else if ((solidTiles.find(map->mapData[topY][topX] - 1) != solidTiles.end())) {
-		bullet.alive = false;
-	}
-	else if ((solidTiles.find(map->mapData[leftY][leftX] - 1) != solidTiles.end())) {
-		bullet.alive = false;
-	}
-	else if ((solidTiles.find(map->mapData[rightY][rightX] - 1) != solidTiles.end())) {
-		bullet.alive = false;
-	}
 	
 }
 

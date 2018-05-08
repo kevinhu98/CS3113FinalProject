@@ -10,6 +10,7 @@
 #include "GameUtilities.h"
 #include "MainMenu.h"
 #include "mode.h"
+#include "GameOverMenu.h"
 
 #ifdef _WINDOWS
 #define RESOURCE_FOLDER ""
@@ -34,6 +35,7 @@ const Uint8 *keys = SDL_GetKeyboardState(NULL);
 SDL_Event event;
 GameState gameState;
 MainMenu menu;
+GameOverMenu gameOver;
 bool done = false;
 FlareMap map;
 GameUtilities Utilities;
@@ -74,10 +76,7 @@ int main(int argc, char *argv[]){
 	spriteSheetTexture = LoadTexture(RESOURCE_FOLDER"QB.png", GL_NEAREST);
 	fontTexture = LoadTexture(RESOURCE_FOLDER"font.png", GL_NEAREST);
 	
-
-
 	mode = STATE_MAIN_MENU; // to load level 1, set gamestate to main menu
-	//mode = STATE_GAME_LEVEL_2;
 	Utilities.event = &event;
 	Utilities.keys = keys;
 	
@@ -87,6 +86,7 @@ int main(int argc, char *argv[]){
 	Utilities.spriteSheets.push_back(spriteSheetTexture);
 	gameState.Initialize(&Utilities);
 	menu.Initialize(&Utilities, fontTexture);
+	gameOver.Initialize(&Utilities, fontTexture);
 
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
 	LoadSounds();
@@ -102,6 +102,7 @@ int main(int argc, char *argv[]){
 		switch (mode) {
 			case STATE_MAIN_MENU:
 				menu.ProcessInput();
+				//gameOver.ProcessInput();
 				break;
 			case STATE_GAME_LEVEL_1:
 			case STATE_GAME_LEVEL_2:
@@ -109,6 +110,7 @@ int main(int argc, char *argv[]){
 				gameState.ProcessInput();
 				break;
 			case STATE_GAME_OVER:
+				gameOver.ProcessInput();
 				break;
 		}
 
@@ -123,6 +125,7 @@ int main(int argc, char *argv[]){
 			switch (mode) {
 			case STATE_MAIN_MENU:
 				menu.Update(FIXED_TIMESTEP);
+				//gameOver.Update(FIXED_TIMESTEP);
 				break;
 			case STATE_GAME_LEVEL_1:
 			case STATE_GAME_LEVEL_2:
@@ -130,6 +133,7 @@ int main(int argc, char *argv[]){
 				gameState.Update(FIXED_TIMESTEP);
 				break;
 			case STATE_GAME_OVER:
+				gameOver.Update(FIXED_TIMESTEP);
 				break; 
 			}
 
@@ -143,6 +147,7 @@ int main(int argc, char *argv[]){
 		case STATE_MAIN_MENU:
 			gameState.Render();
 			menu.Render();
+			//gameOver.Render();
 			break;
 		case STATE_GAME_LEVEL_1:
 		case STATE_GAME_LEVEL_2:
@@ -150,6 +155,7 @@ int main(int argc, char *argv[]){
 			gameState.Render();
 			break;
 		case STATE_GAME_OVER:
+			gameOver.Render();
 			break;
 		}
 

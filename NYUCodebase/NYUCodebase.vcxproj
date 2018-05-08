@@ -78,6 +78,7 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="FlareMap.cpp" />
+    <ClCompile Include="GameOverMenu.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="GameUtilities.cpp" />
     <ClCompile Include="main.cpp" />
@@ -92,6 +93,7 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="FlareMap.h" />
+    <ClInclude Include="GameOverMenu.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GameUtilities.h" />
     <ClInclude Include="mode.h" />
